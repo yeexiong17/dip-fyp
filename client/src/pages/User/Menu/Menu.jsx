@@ -13,22 +13,22 @@ import facilities from '../../../asset/facilities.png';
 import pest_control from '../../../asset/pest_control.png';
 
 const categories = [
-    { id: 1, name: 'Water failure', image: pipe, link: '/form' },
-    { id: 2, name: 'Power failure', image: power_failure, link: '/form' },
-    { id: 3, name: 'Aircond service', image: aircond_service, link: '/form' },
-    { id: 4, name: 'Cleaning', image: cleaning, link: '/form' },
-    { id: 5, name: 'Building', image: building, link: '/form' },
-    { id: 6, name: 'Outdoor', image: outdoor, link: '/form' },
-    { id: 7, name: 'Facilities', image: facilities, link: '/form' },
-    { id: 8, name: 'Pest control', image: pest_control, link: '/form' },
+    { id: 0, name: 'Water failure', image: pipe, link: '/form' },
+    { id: 1, name: 'Power failure', image: power_failure, link: '/form' },
+    { id: 2, name: 'Aircond service', image: aircond_service, link: '/form' },
+    { id: 3, name: 'Cleaning', image: cleaning, link: '/form' },
+    { id: 4, name: 'Building', image: building, link: '/form' },
+    { id: 5, name: 'Outdoor', image: outdoor, link: '/form' },
+    { id: 6, name: 'Facilities', image: facilities, link: '/form' },
+    { id: 7, name: 'Pest control', image: pest_control, link: '/form' },
 ];
 
 const Menu = () => {
     return (
         <div>
             <Nav />
-            <div className="flex flex-col items-center">
-                <h1 className="text-3xl font-bold text-center mt-12">Types of Problems</h1>
+            <div className="flex flex-col pt-20 items-center">
+                <h1 className="text-3xl font-bold text-center">Types of Problems</h1>
 
                 <h3 className="max-w-xl mx-auto text-xl text-center mt-10">
                     We provide maintenance and repair, addressing a spectrum of issues, from minor to major faults, ensuring everything functions seamlessly.
