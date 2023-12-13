@@ -14,6 +14,8 @@ function AdminSignup() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        location.href = '/admin/dashboard'
     }
 
     return (

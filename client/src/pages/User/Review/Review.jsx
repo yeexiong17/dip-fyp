@@ -3,6 +3,11 @@ import React from 'react'
 import Nav from '../../../components/Nav'
 
 const Review = () => {
+
+    const handleSubmit = () => {
+        location.href = '/review'
+    }
+
     return (
         <>
             <Nav />
@@ -56,12 +61,38 @@ const Review = () => {
                             <span className="text-sm font-medium text-gray-500 dark:text-gray-400">1%</span>
                         </div>
                     </div>
-                    <div className='mt-12'>
+                    <div className='mt-6'>
+                        <button className="btn bg-orange-500 text-neutral-50 rounded-full hover:bg-orange-600" onClick={() => document.getElementById('my_modal_3').showModal()}>Leave a review</button>
+                        <dialog id="my_modal_3" className="modal">
+                            <div className="modal-box">
+                                <form method="dialog">
+                                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                </form>
+                                <h3 className="font-bold text-2xl">Let us know what you think!</h3>
+                                <form onSubmit={handleSubmit} action='/'>
+                                    <div className="rating mt-4">
+                                        <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" />
+                                        <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" />
+                                        <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" />
+                                        <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" />
+                                        <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" />
+                                    </div>
+                                    <div className='mt-4'>
+                                        <textarea className="textarea textarea-bordered w-full" placeholder="Write a review..." required></textarea>
+                                    </div>
+                                    <div className='mt-10'>
+                                        <button type='submit' className="btn bg-orange-500 text-neutral-50 hover:bg-orange-600 rounded-full">Submit Review</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </dialog>
+                    </div>
+                    <div className='mt-6'>
                         <article className="p-6 mb-4 text-base bg-white border border-neutral-200 rounded-lg dark:bg-gray-900 shadow">
                             <footer className="flex justify-between items-center mb-2">
                                 <div className="flex items-center">
                                     <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">Michael Gough</p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400"><time pubdate dateTime="2022-02-08"
+                                    <p className="text-sm text-gray-600 dark:text-gray-400"><time dateTime="2022-02-08"
                                         title="February 8th, 2022">Feb. 8, 2022</time></p>
                                 </div>
                             </footer>
@@ -73,7 +104,7 @@ const Review = () => {
                             <footer className="flex justify-between items-center mb-2">
                                 <div className="flex items-center">
                                     <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">Michael Gough</p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400"><time pubdate dateTime="2022-02-08"
+                                    <p className="text-sm text-gray-600 dark:text-gray-400"><time dateTime="2022-02-08"
                                         title="February 8th, 2022">Feb. 8, 2022</time></p>
                                 </div>
                             </footer>
@@ -85,7 +116,7 @@ const Review = () => {
                             <footer className="flex justify-between items-center mb-2">
                                 <div className="flex items-center">
                                     <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">Michael Gough</p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400"><time pubdate dateTime="2022-02-08"
+                                    <p className="text-sm text-gray-600 dark:text-gray-400"><time dateTime="2022-02-08"
                                         title="February 8th, 2022">Feb. 8, 2022</time></p>
                                 </div>
                             </footer>
