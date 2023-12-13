@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import Sidebar from '../../../components/Sidebar'
 
@@ -6,59 +6,70 @@ import './AllReport.css'
 
 const reportData = [
     {
-        reportId: 1,
-        reportType: 'Electrical',
-        description: 'Room 123 plug unusable',
+        reportId: 0,
+        faultCategory: 'Electrical',
+        venue: 'FCI',
+        level: 3,
+        area: 'Lab',
+        description: 'Lab L234 plug unusable',
         dateReported: '12/3/2023',
         reportStatus: 'Progressing',
-        completedImage: false
+        completedImage: false,
+        userId: 0
+    },
+    {
+        reportId: 1,
+        faultCategory: 'Aircond Service',
+        venue: 'FCM',
+        level: 3,
+        area: 'Office',
+        description: 'Office O123 aircond needs service, not cold',
+        dateReported: '12/3/2023',
+        reportStatus: 'Progressing',
+        completedImage: false,
+        userId: 1
     },
     {
         reportId: 2,
-        reportType: 'Pipe Leakage',
-        description: 'Level 1 male toilet toilet pipe leaking',
-        dateReported: '1/5/2023',
+        faultCategory: 'Electrical',
+        venue: 'FOE',
+        level: 3,
+        area: 'Classroom',
+        description: 'Classroom C345 ceiling light is flicking',
+        dateReported: '12/3/2023',
         reportStatus: 'Completed',
-        completedImage: true
+        completedImage: false,
+        userId: 2
     },
-    {
-        reportId: 3,
-        reportType: 'Air Con Service',
-        description: 'Room 234 air conditioner is not cold',
-        dateReported: '22/6/2023',
-        reportStatus: 'Progressing',
-        completedImage: false
-    }
 ];
 
 const userData = [
     {
-        userId: 1,
+        userId: 0,
         username: 'John',
         email: 'john@gamil.com',
+        reportId: [0]
+    },
+    {
+        userId: 1,
+        username: 'Jake',
+        email: 'jake@gamil.com',
         reportId: [1]
     },
     {
         userId: 2,
-        username: 'Jake',
-        email: 'jake@gamil.com',
-        reportId: [2]
-    },
-    {
-        userId: 3,
         username: 'Jess',
         email: 'jess@gamil.com',
-        reportId: [3]
+        reportId: [2]
     }
 ]
-
 
 const AllReport = () => {
 
     const [open, setOpen] = useState(false)
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [selectedReport, setSelectedReport] = useState(null)
-    const [fileSelected, setFileSelected] = useState(false);
+    const [fileSelected, setFileSelected] = useState(false)
 
     const toastAnimate = () => {
         setOpen(true)
@@ -68,8 +79,20 @@ const AllReport = () => {
         }, 1500)
     }
 
-    const drawerState = () => {
-        setDrawerOpen(!drawerOpen)
+    useEffect(() => {
+        if (selectedReport) {
+            console.log(selectedReport)
+            setDrawerOpen(!drawerOpen)
+        }
+    }, [selectedReport])
+
+    const handleRowClick = (report) => {
+        if (selectedReport === report) {
+            // If the same row is clicked again, clear the selected report to close the drawer
+            setDrawerOpen(true)
+        } else {
+            setSelectedReport(report)
+        }
     }
 
     const handleComplete = (event) => {
@@ -78,11 +101,11 @@ const AllReport = () => {
 
         let completed = confirm('Mark this report as completed?')
         completed ? toastAnimate() : null
-    };
+    }
 
     const handleFileChange = (e) => {
         setFileSelected(!!e.target.files.length) // Set to true if files are selected, false otherwise
-    };
+    }
 
     const handleCompleted = () => {
         const input_image = document.querySelector('#input_image')
@@ -123,9 +146,9 @@ const AllReport = () => {
                                                 {
                                                     reportData.map((report, i) => (
 
-                                                        <tr key={report.reportId} className='hover hover:cursor-pointer' onClick={() => { setSelectedReport(report); drawerState(); }}>
+                                                        <tr key={report.reportId} className='hover hover:cursor-pointer' onClick={() => handleRowClick(report)}>
                                                             <th>{i + 1}</th>
-                                                            <td>{report.reportType}</td>
+                                                            <td>{report.faultCategory}</td>
                                                             <td className='truncate max-w-xs'>{report.description}</td>
                                                             <td>{report.dateReported}</td>
                                                             <td>{report.reportStatus}</td>
@@ -175,29 +198,51 @@ const AllReport = () => {
                         </div>
                     </div >
                 </div>
-                <div className="drawer-side z-50 overflow-hidden">
-                    <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay" onClick={drawerState}></label>
+                <div className="drawer-side z-50 overflow-y-auto">
+                    <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay" onClick={() => setDrawerOpen(false)}></label>
                     <ul className="menu p-4 w-96 min-h-full bg-base-200 text-base-content">
                         {/* Sidebar content here */}
-                        <div>
-                            <h1 className='text-2xl font-bold'>User Info</h1>
-                        </div>
-                        <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
-                            <p className='font-bold'>John Doe</p>
-                            <p>johndoe@gmail.com</p>
-                        </div>
-                        <div className='mt-10'>
-                            <h1 className='text-2xl font-bold'>Report Info</h1>
-                        </div>
-                        <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
-                            <p className='font-bold'>Report Type:<span className='font-normal ml-2'>Air Con Service</span></p>
-                        </div>
-                        <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
-                            <p className='font-bold'>Description:<span className='font-normal ml-2'>Room 234 air conditioner is not cold</span></p>
-                        </div>
-                        <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
-                            <p className='font-bold'>Date Reported:<span className='font-normal ml-2'>22/6/2023</span></p>
-                        </div>
+                        {
+                            selectedReport
+                                ?
+                                <>
+                                    <div>
+                                        <h1 className='text-2xl font-bold'>User Info</h1>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>{userData[selectedReport.userId].username}</p>
+                                        <p>{userData[selectedReport.userId].email}</p>
+                                    </div>
+                                    <div className='mt-10'>
+                                        <h1 className='text-2xl font-bold'>Report Info</h1>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Fault Category:</p>
+                                        <p className='font-normal mt-2'>{selectedReport.faultCategory}</p>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Venue:</p>
+                                        <p className='font-normal mt-2'>{selectedReport.venue}</p>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Level:</p>
+                                        <p className='font-normal mt-2'>{selectedReport.level}</p>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Room/Area:</p>
+                                        <p className='font-normal mt-2'>{selectedReport.area}</p>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Description:</p>
+                                        <p className='font-normal mt-2'>{selectedReport.description}</p>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Date Reported:</p>
+                                        <p className='font-normal mt-2'>{selectedReport.dateReported}</p>
+                                    </div>
+                                </>
+                                : null
+                        }
                     </ul>
                 </div>
             </div>
