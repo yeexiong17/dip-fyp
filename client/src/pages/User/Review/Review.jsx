@@ -91,38 +91,32 @@ const Review = () => {
                         <article className="p-6 mb-4 text-base bg-white border border-neutral-200 rounded-lg dark:bg-gray-900 shadow">
                             <footer className="flex justify-between items-center mb-2">
                                 <div className="flex items-center">
-                                    <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">Michael Gough</p>
+                                    <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">Jake</p>
                                     <p className="text-sm text-gray-600 dark:text-gray-400"><time dateTime="2022-02-08"
-                                        title="February 8th, 2022">Feb. 8, 2022</time></p>
+                                        title="February 8th, 2022">March. 3, 2022</time></p>
                                 </div>
                             </footer>
-                            <p className="text-gray-500 dark:text-gray-400">Very straight-to-point article. Really worth time reading. Thank you! But tools are just the
-                                instruments for the UX designers. The knowledge of the design tools are as important as the
-                                creation of the design strategy.</p>
+                            <p className="text-gray-500 dark:text-gray-400">The management is very efficient in doing maintainance. It usually take about 2 days for the problem to be solved.</p>
                         </article>
                         <article className="p-6 mb-4 text-base bg-white border border-neutral-200 rounded-lg dark:bg-gray-900 shadow">
                             <footer className="flex justify-between items-center mb-2">
                                 <div className="flex items-center">
-                                    <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">Michael Gough</p>
+                                    <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">John</p>
                                     <p className="text-sm text-gray-600 dark:text-gray-400"><time dateTime="2022-02-08"
-                                        title="February 8th, 2022">Feb. 8, 2022</time></p>
+                                        title="February 8th, 2022">Jan. 1, 2022</time></p>
                                 </div>
                             </footer>
-                            <p className="text-gray-500 dark:text-gray-400">Very straight-to-point article. Really worth time reading. Thank you! But tools are just the
-                                instruments for the UX designers. The knowledge of the design tools are as important as the
-                                creation of the design strategy.</p>
+                            <p className="text-gray-500 dark:text-gray-400">This is website is well designed. It allows user to navigate the website with ease.</p>
                         </article>
                         <article className="p-6 mb-4 text-base bg-white border border-neutral-200 rounded-lg dark:bg-gray-900 shadow">
                             <footer className="flex justify-between items-center mb-2">
                                 <div className="flex items-center">
-                                    <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">Michael Gough</p>
+                                    <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">Mike</p>
                                     <p className="text-sm text-gray-600 dark:text-gray-400"><time dateTime="2022-02-08"
-                                        title="February 8th, 2022">Feb. 8, 2022</time></p>
+                                        title="February 8th, 2022">Aug. 22, 2022</time></p>
                                 </div>
                             </footer>
-                            <p className="text-gray-500 dark:text-gray-400">Very straight-to-point article. Really worth time reading. Thank you! But tools are just the
-                                instruments for the UX designers. The knowledge of the design tools are as important as the
-                                creation of the design strategy.</p>
+                            <p className="text-gray-500 dark:text-gray-400">I am impressed with how I can make report with just a few clicks. I do not need to go all the way to the management physically to make reports.</p>
                         </article>
                     </div>
                 </div>
