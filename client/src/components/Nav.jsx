@@ -5,32 +5,47 @@ import { Link } from 'react-router-dom';
 export default function Nav() {
     return (
         <div className="navbar fixed top-0 z-50 px-6 bg-base-100">
+            {/* Small Screen */}
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
                     </div>
                     <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                        <li><a href='/home'>Home</a></li>
+                        <li><a href='/home' className='py-2'>Home</a></li>
+
                         <li>
-                            <details open>
-                                <summary>Services</summary>
+                            <details>
+                                <summary className='py-2'>Services</summary>
                                 <ul>
                                     <li><a href='/report'>Make a report</a></li>
                                     <li><a href='/track'>Track my report</a></li>
                                 </ul>
                             </details>
                         </li>
-                        <li><a href='/about'>About Us</a></li>
-                        <li><a href='/contact'>Contact Us</a></li>
-                        <li><a href='/faq'>Faq</a></li>
+
+                        <li><a href='/review' className='py-2'>Review</a></li>
+                        <li><a href='/contact' className='py-2'>Contact Us</a></li>
+
+                        <li>
+                            <details>
+                                <summary className='py-2'>Info</summary>
+                                <ul>
+                                    <li><a href='/about'>About Us</a></li>
+                                    <li><a href='/faq'>Faq</a></li>
+                                </ul>
+                            </details>
+                        </li>
                     </ul>
                 </div>
                 <Link to='/home' className="btn btn-ghost font-bold text-3xl text-orange-500 hover:bg-transparent">Resolve</Link>
             </div>
+
+            {/* Main */}
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
                     <li><a href='/home'>Home</a></li>
+
                     <div className="dropdown dropdown-hover">
                         <li><a>Services</a></li>
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
@@ -38,9 +53,17 @@ export default function Nav() {
                             <li><a href='/track'>Track my report</a></li>
                         </ul>
                     </div>
-                    <li><a href='/about'>About Us</a></li>
+
+                    <li><a href='/review'>Review</a></li>
                     <li><a href='/contact'>Contact Us</a></li>
-                    <li><a href='/faq'>Faq</a></li>
+
+                    <div className="dropdown dropdown-hover">
+                        <li><a>Info</a></li>
+                        <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                            <li><a href='/about'>About Us</a></li>
+                            <li><a href='/faq'>Faq</a></li>
+                        </ul>
+                    </div>
                 </ul>
             </div>
             <div className="navbar-end">
@@ -56,7 +79,7 @@ export default function Nav() {
                                 Profile
                             </a>
                         </li>
-                        <li><a>Logout</a></li>
+                        <li><a href='/'>Logout</a></li>
                     </ul>
                 </div>
             </div>

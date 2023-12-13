@@ -10,7 +10,7 @@ export default function Top() {
                 <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-8 shadow-lg rounded-lg">
                     <div className="px-4 py-5 flex-auto">
                         <div className="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-red-400">
-                        <img
+                            <img
                                 src={badge}
                                 alt="Excellent services"
                             />
@@ -30,7 +30,7 @@ export default function Top() {
                 <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-8 shadow-lg rounded-lg">
                     <div className="px-4 py-5 flex-auto">
                         <div className="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-blue-400">
-                        <img
+                            <img
                                 src={collaboration}
                                 alt="Foster Collaboration"
                             />
@@ -50,7 +50,7 @@ export default function Top() {
                 <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-8 shadow-lg rounded-lg">
                     <div className="px-4 py-5 flex-auto">
                         <div className="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-green-400">
-                        <img
+                            <img
                                 src={efficiency}
                                 alt="Simplify Reporting"
                             />

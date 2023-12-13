@@ -9,12 +9,12 @@ export default function Forgetpw() {
                     About Us
                 </h3>
                 <p className="text-lg font-light leading-relaxed mt-4 mb-4 text-gray-700 text-justify">
-                Welcome to RESOLVE, where innovation meets responsibility. 
-                Founded 2023, we embarked on a journey to revolutionize the way faults are reported and addressed in buildings. 
-                Our story begins with a shared passion for creating safer, more efficient spaces for everyone.
+                    Welcome to RESOLVE, where innovation meets responsibility.
+                    Founded 2023, we embarked on a journey to revolutionize the way faults are reported and addressed in buildings.
+                    Our story begins with a shared passion for creating safer, more efficient spaces for everyone.
                 </p>
                 <div class="mt-8">
-                    <a href="/AboutUs" class="text-blue-500 hover:text-blue-600 font-medium">Learn more about us
+                    <a href="/about" class="text-blue-500 hover:text-blue-600 font-medium">Learn more about us
                         <span class="ml-2">&#8594;</span></a>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function LoginForm() {
 
-    const [inputs, setInputs] = useState({email: "", password: ""});
+    const [inputs, setInputs] = useState({ email: "", password: "" });
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -74,13 +74,13 @@ function LoginForm() {
 
                 <div className='mt-3 flex justify-center items-center'>
                     <p className='font-medium text-base'>Admin Login</p>
-                    <Link to="/adlogin">
+                    <Link to="/admin/login">
                         <button className='ml-2 font-medium text-base text-violet-500' >Here</button>
                     </Link>
                 </div>
             </div>
         </form>
-      
+
     )
 }
 
