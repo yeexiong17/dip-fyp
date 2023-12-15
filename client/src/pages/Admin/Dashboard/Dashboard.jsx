@@ -120,7 +120,7 @@ const Dashboard = () => {
                                 <img width="64" height="64" src="https://img.icons8.com/color/64/user.png" alt="user" />
                             </div>
                             <div className='flex flex-col justify-center w-fit'>
-                                <h1>Total Reports</h1>
+                                <h1>Total Users</h1>
                                 <h1 className='text-3xl font-extrabold'>1200</h1>
                             </div>
                         </div>
