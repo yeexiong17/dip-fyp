@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom'
+
+import { useAuthContext } from './MyContext'
 
 import './App.css'
 
@@ -25,45 +27,54 @@ import Faq from './pages/User/Faq/Faq'
 
 function App() {
 
-  const location = useLocation()
-  const currentPath = location.pathname
+  // const location = useLocation()
+  // const currentPath = location.pathname
+  // const navigate = useNavigate()
 
-  const isAdmin = false
-
-  const [isSignedIn, setIsSignedIn] = useState(true)
-
-  function onSignIn(bool) {
-    bool ? setIsSignedIn(true) : setIsSignedIn(false)
-  }
-
-  function setSignIn() {
-    setIsSignedIn(false)
-  }
+  const { userSignIn, adminSignIn } = useAuthContext()
 
   return (
     <>
       <Routes>
-        {/* User Routes */}
-        <Route path="/" element={<Login />} />
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgetpw" element={<Forgetpw />} />
+        <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
-        <Route path="/track" element={<Tracking />} />
-        <Route path="/report" element={<ReportForm />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path='/profile' element={<Profile />} />
-        <Route path='/review' element={<Review />} />
         <Route path="/faq" element={<Faq />} />
-
-        {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/signup" element={<AdminSignup />} />
-        <Route path="/admin/dashboard" element={<Dashboard />} />
-        <Route path="/admin/incoming" element={<Incoming />} />
-        <Route path="/admin/allreport" element={<AllReport />} />
-        <Route path="/admin/profile" element={<AdminProfile />} />
+        <Route path="/*" element={<Navigate to="/" />} />
+        <Route path="/admin/*" element={<Navigate to="/login" />} />
+
+        {
+          userSignIn && !adminSignIn
+            ? (
+              <>
+                <Route path="/track" element={<Tracking />} />
+                <Route path="/report" element={<ReportForm />} />
+                <Route path='/profile' element={<Profile />} />
+                <Route path='/review' element={<Review />} />
+              </>
+            ) : null
+        }
+
+
+        {/* Admin Routes */}
+        {
+          adminSignIn && !userSignIn
+            ? <>
+              <Route path="/admin/dashboard" element={<Dashboard />} />
+              <Route path="/admin/incoming" element={<Incoming />} />
+              <Route path="/admin/allreport" element={<AllReport />} />
+              <Route path="/admin/profile" element={<AdminProfile />} />
+            </>
+            : null
+        }
+
       </Routes>
     </>
   );
@@ -71,26 +82,3 @@ function App() {
 }
 
 export default App
-
-
-
-// const [route, setRoute] = useState('')
-// const [isSignedIn, setIsSignedIn] = useState(false)
-
-// const onRouteChange = (route) => {
-//   if (route === 'Home') {
-//     setIsSignedIn(true)
-//   }
-//   else {
-//     setIsSignedIn(false)
-//   }
-// }
-
-// <div>
-//   {isSignedIn ? (
-//     <>
-//       <Nav />
-//       <Home />
-//     </>
-//   ) : <Signup onRouteChange={onRouteChange} />}
-// </div>

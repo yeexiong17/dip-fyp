@@ -1,10 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
+import { useAuthContext } from '../MyContext';
 
 function LoginForm() {
 
     const [inputs, setInputs] = useState({ email: "", password: "" });
+    const { userLogin } = useAuthContext()
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -12,10 +15,33 @@ function LoginForm() {
         setInputs(values => ({ ...values, [name]: value }))
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        location.href = "/home";
+        setIsLoading(true)
+
+        try {
+            const response = await fetch('http://localhost:8000/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(inputs)
+            });
+            if (response.ok) {
+                const responseJson = await response.json();
+                if (responseJson.result) {
+                    userLogin()
+                }
+            } else {
+                alert('User credential incorrect')
+                console.error('Login failed')
+            }
+        } catch (error) {
+            console.error('Error during login:', error)
+        } finally {
+            setIsLoading(false); // Set loading state to false regardless of success or failure
+        }
     }
 
     return (
