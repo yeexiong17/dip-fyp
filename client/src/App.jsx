@@ -7,6 +7,7 @@ import './App.css'
 
 import AdminLogin from './pages/Admin/AdminLogin/AdminLogin'
 import AdminSignup from './pages/Admin/AdminSignup/AdminSignup'
+import AddCategory from './pages/Admin/AddCategory/AddCategory'
 import Dashboard from './pages/Admin/Dashboard/Dashboard'
 import Incoming from './pages/Admin/Incoming/Incoming'
 import AllReport from './pages/Admin/AllReport/AllReport'
@@ -68,6 +69,7 @@ function App() {
           adminSignIn && !userSignIn
             ? <>
               <Route path="/admin/dashboard" element={<Dashboard />} />
+              <Route path="/admin/addcategory" element={<AddCategory />} />
               <Route path="/admin/incoming" element={<Incoming />} />
               <Route path="/admin/allreport" element={<AllReport />} />
               <Route path="/admin/profile" element={<AdminProfile />} />

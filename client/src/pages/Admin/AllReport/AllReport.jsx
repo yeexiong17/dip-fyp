@@ -40,7 +40,7 @@ const reportData = [
         reportStatus: 'Completed',
         completedImage: false,
         userId: 2
-    },
+    }
 ];
 
 const userData = [

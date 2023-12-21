@@ -6,7 +6,7 @@ const MyContext = createContext()
 const ContextProvider = ({ children }) => {
 
     const [userSignIn, setUserSignIn] = useState(false)
-    const [adminSignIn, setAdminSignIn] = useState(false)
+    const [adminSignIn, setAdminSignIn] = useState(true)
     const [userProfile, setUserProfile] = useState(null)
 
     const navigate = useNavigate()
