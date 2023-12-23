@@ -15,6 +15,5 @@ app.use(morgan('combined'))
 app.use(express.json())
 
 app.use('/user', usersRouter)
-app.use('/user', usersRouter)
 
 module.exports = app

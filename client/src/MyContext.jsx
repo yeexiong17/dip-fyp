@@ -6,20 +6,26 @@ const MyContext = createContext()
 const ContextProvider = ({ children }) => {
 
     const [userSignIn, setUserSignIn] = useState(false)
-    const [adminSignIn, setAdminSignIn] = useState(true)
+    const [adminSignIn, setAdminSignIn] = useState(false)
     const [userProfile, setUserProfile] = useState(null)
+
+    const [reportCategory, setReportCategory] = useState(null)
 
     const navigate = useNavigate()
 
-    const userLogin = () => {
+    const userLogin = (userProfile) => {
         // Your login logic here
+
+        setUserProfile(userProfile)
         setUserSignIn(true)
+        setAdminSignIn(false)
         navigate('/')
     }
 
     const userLogout = () => {
         // Your logout logic here
         setUserSignIn(false)
+        setUserProfile(null)
         location.href = '/login'
     }
 
@@ -35,11 +41,16 @@ const ContextProvider = ({ children }) => {
 
     const contextValue = {
         userSignIn,
-        adminSignIn,
         userLogin,
         userLogout,
+        userProfile,
+        setUserProfile,
         adminLogin,
         adminLogout,
+        adminSignIn,
+        reportCategory,
+        setReportCategory,
+        navigate
     }
 
     return <MyContext.Provider value={contextValue}>{children}</MyContext.Provider>

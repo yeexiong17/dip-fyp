@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
+import { v4 } from 'uuid'
+
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { storage } from '../../firebase.config'
+
+import { useAuthContext } from '../MyContext';
 
 function Form() {
 
-    const [inputs, setInputs] = useState({});
+    const [inputs, setInputs] = useState({})
+    const [image, setImage] = useState(null)
+
+    const { reportCategory, userProfile, navigate } = useAuthContext()
+
+    useEffect(() => {
+        const category = reportCategory
+
+        setInputs(values => ({
+            ...values,
+            category: category,
+            status: 'Incoming',
+            review: 0,
+            user_id: userProfile.user_id
+        }))
+    }, [])
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -12,8 +33,96 @@ function Form() {
         setInputs(values => ({ ...values, [name]: value }))
     }
 
-    const handleSubmit = (event) => {
+    const storeImage = async (reportId) => {
+
+        const imageRef = ref(storage, `user/report/${image.name + v4()}`)
+
+        const uploadTask = uploadBytesResumable(imageRef, image)
+
+        uploadTask.on("state_changed",
+            (snapshot) => {
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Attachment Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused');
+                        break;
+                    case 'running':
+                        console.log('Attachment Upload is running');
+                        break;
+                }
+            },
+            (error) => {
+                // Handle unsuccessful uploads
+                console.error("Error uploading attachment:", error);
+            },
+            async () => {
+
+                const downloadUrl = await getDownloadURL(imageRef);
+
+                const urlObject = {
+                    imageUrl: downloadUrl
+                }
+
+                try {
+                    const response = await fetch(`http://localhost:8000/user/saveReportImage/${reportId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(urlObject)
+                    })
+
+                    if (response.ok) {
+                        const responseJSON = await response.json()
+                        console.log(responseJSON.message)
+                    }
+                }
+                catch (error) {
+                    console.error(error)
+                }
+                finally {
+                    console.log(downloadUrl)
+                }
+            }
+        );
+
+    }
+
+    const handleSubmit = async (event) => {
+
         event.preventDefault();
+
+        if (image == null) {
+            return alert('Please attach an image or video')
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/user/report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(inputs)
+            })
+
+            if (response.ok) {
+
+                const responseJSON = await response.json()
+
+                await storeImage(responseJSON.result.reportId)
+                console.log('Report Created Successfully')
+
+            }
+        }
+        catch (error) {
+            console.log(error)
+        }
+        finally {
+            setImage(null)
+            navigate('/menu')
+        }
     }
 
     return (
@@ -24,8 +133,8 @@ function Form() {
                         <h1 className="pb-4 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Incident Report Form
                         </h1>
-                        <form className="space-y-4 md:space-y-6" action="#">
-                            <h1 className="pb-4 text-base font-bold leading-tight tracking-tight text-gray-900 md:text-xl dark:text-white">
+                        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+                            {/* <h1 className="pb-4 text-base font-bold leading-tight tracking-tight text-gray-900 md:text-xl dark:text-white">
                                 Personal Details
                             </h1>
 
@@ -58,15 +167,16 @@ function Form() {
                                 </div>
                             </div>
 
-                            <h1 className="py-4 text-base font-bold leading-tight tracking-tight text-gray-900 md:text-xl dark:text-white">
+                            <h1 className="text-base font-bold leading-tight tracking-tight text-gray-900 md:text-xl dark:text-white">
                                 Incident Details
-                            </h1>
+                            </h1> */}
 
                             <div>
                                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Fault Category
                                 </label>
-                                <select className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
+                                <input type="text" name='category' placeholder={reportCategory} className="input input-bordered disabled:placeholder:text-neutral-600 disabled:placeholder:font-semibold w-full" disabled />
+                                {/* <select className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
                                     <option>-- Select --</option>
                                     <option>Water failure</option>
                                     <option>Power failure</option>
@@ -76,7 +186,7 @@ function Form() {
                                     <option>Outdoor</option>
                                     <option>Facilities</option>
                                     <option>Pest control</option>
-                                </select >
+                                </select > */}
                             </div>
 
                             <div>
@@ -87,7 +197,6 @@ function Form() {
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     type='text'
                                     name='venue'
-                                    value={inputs.venue}
                                     onChange={handleChange}
                                     required
                                 />
@@ -100,7 +209,6 @@ function Form() {
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     type='number'
                                     name='level'
-                                    value={inputs.level}
                                     onChange={handleChange}
                                     required
                                 />
@@ -110,7 +218,7 @@ function Form() {
                                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Room/Area
                                 </label>
-                                <select className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
+                                <select name='room' onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
                                     <option>-- Select --</option>
                                     <option>Office</option>
                                     <option>Lab</option>
@@ -129,8 +237,7 @@ function Form() {
                                         className="form-textarea resize-none border border-gray-300 rounded-md w-full py-2 px-3"
                                         rows="3"
                                         type='email'
-                                        name='desciption'
-                                        value={inputs.desciption}
+                                        name='description'
                                         onChange={handleChange}
                                     ></textarea>
                                 </div>
@@ -144,9 +251,17 @@ function Form() {
                                             type="file"
                                             className="cursor-pointer opacity-0 absolute w-full h-full "
                                             id="file"
+                                            name='image'
+                                            onChange={(e) => setImage(e.target.files[0])}
                                         />
                                         <div className="border border-gray-300 bg-white rounded-md py-2 px-3 flex items-center">
-                                            <span className="mr-2">Choose a file...</span>
+                                            <span className="mr-2">
+                                                {
+                                                    image
+                                                        ? image.name
+                                                        : 'Choose a file...'
+                                                }
+                                            </span>
                                             <span className="text-blue-500 ">Browse</span>
                                         </div>
                                     </div>
@@ -154,14 +269,12 @@ function Form() {
                             </div>
 
                             <div>
-                                <Link to="/home">
-                                    <button
-                                        type="submit"
-                                        className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                    >
-                                        Submit
-                                    </button>
-                                </Link>
+                                <button
+                                    type="submit"
+                                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                >
+                                    Submit
+                                </button>
                             </div>
                         </form>
                     </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import Nav from '../../../components/Nav';
+import { useAuthContext } from '../../../MyContext';
 
 import pipe from '../../../asset/pipe.png';
 import power_failure from '../../../asset/power_failure.png';
@@ -13,17 +14,53 @@ import facilities from '../../../asset/facilities.png';
 import pest_control from '../../../asset/pest_control.png';
 
 const categories = [
-    { id: 0, name: 'Water failure', image: pipe, link: '/form' },
-    { id: 1, name: 'Power failure', image: power_failure, link: '/form' },
-    { id: 2, name: 'Aircond service', image: aircond_service, link: '/form' },
-    { id: 3, name: 'Cleaning', image: cleaning, link: '/form' },
-    { id: 4, name: 'Building', image: building, link: '/form' },
-    { id: 5, name: 'Outdoor', image: outdoor, link: '/form' },
-    { id: 6, name: 'Facilities', image: facilities, link: '/form' },
-    { id: 7, name: 'Pest control', image: pest_control, link: '/form' },
+    {
+        id: 0,
+        name: 'Water failure',
+        image: pipe
+    },
+    {
+        id: 1,
+        name: 'Power failure',
+        image: power_failure
+    },
+    {
+        id: 2,
+        name: 'Aircond service',
+        image: aircond_service
+
+    },
+    {
+        id: 3,
+        name: 'Cleaning',
+        image: cleaning
+    },
+    {
+        id: 4,
+        name: 'Building',
+        image: building
+    },
+    {
+        id: 5,
+        name: 'Outdoor',
+        image: outdoor
+    },
+    {
+        id: 6,
+        name: 'Facilities',
+        image: facilities
+    },
+    {
+        id: 7,
+        name: 'Pest control',
+        image: pest_control
+    },
 ];
 
 const Menu = () => {
+
+    const { setReportCategory } = useAuthContext()
+
     return (
         <div>
             <Nav />
@@ -38,7 +75,7 @@ const Menu = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7 ">
                         {categories.map(category => (
                             <div key={category.id} className="bg-white p-4 rounded shadow-md text-center active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform">
-                                <Link to={category.link} className='flex-grow-0'>
+                                <Link to='/report' className='flex-grow-0' onClick={() => setReportCategory(category.name)}>
                                     <img src={category.image} alt={category.name} className="mx-auto w-20 object-center mb-4" />
                                 </Link>
                                 <h2 className="text-base font-semibold align-bottom ">{category.name}</h2>

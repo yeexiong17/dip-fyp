@@ -17,13 +17,12 @@ export default function Nav() {
                     </div>
                     <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
                         <li><Link to='/' className='py-2'>Home</Link></li>
-                        <li><Link to='/menu'>Menu</Link></li>
 
                         <li>
                             <details>
                                 <summary className='py-2'>Services</summary>
                                 <ul>
-                                    <li><Link to='/report'>Make a report</Link></li>
+                                    <li><Link to='/menu'>Make a report</Link></li>
                                     <li><Link to='/track'>Track my report</Link></li>
                                 </ul>
                             </details>
@@ -58,12 +57,11 @@ export default function Nav() {
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
                     <li><Link to='/'>Home</Link></li>
-                    <li><Link to='/menu'>Menu</Link></li>
 
                     <div className="dropdown dropdown-hover">
                         <li><a>Services</a></li>
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                            <li><Link to='/report'>Make a report</Link></li>
+                            <li><Link to='/menu'>Make a report</Link></li>
                             <li><Link to='/track'>Track my report</Link></li>
                         </ul>
                     </div>

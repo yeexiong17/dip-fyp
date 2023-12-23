@@ -1,26 +1,60 @@
 import React, { useState } from 'react'
+
 import Nav from '../../../components/Nav'
+import { useAuthContext } from '../../../MyContext'
 
 const Profile = () => {
 
+    const [editUsername, setEditUsername] = useState(false)
+    const [newUsername, setNewUsername] = useState({})
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [isGeneralTabChecked, setGeneralTabChecked] = useState(true);
 
+    const { userProfile, setUserProfile } = useAuthContext()
+
     const handleGeneralTabClick = () => {
-        setGeneralTabChecked(true);
-    };
+        setGeneralTabChecked(true)
+    }
 
     const handleSecurityTabClick = () => {
-        setGeneralTabChecked(false);
-    };
+        setGeneralTabChecked(false)
+    }
 
     const handleSubmit = (e) => {
-        e.preventDefault();
+        e.preventDefault()
 
         // Add your logic here for handling form submission with the input values
-    };
+    }
+
+    const onUsernameSave = async () => {
+
+        if (Object.keys(newUsername).length === 0 || newUsername.newUsername === '') {
+            return alert('Please enter a valid name')
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8000/user/update/${userProfile.user_id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newUsername)
+            })
+            if (response.ok) {
+                setUserProfile(value => ({ ...value, user_username: newUsername.newUsername }))
+            }
+        }
+        catch (error) {
+            console.error('Unable to save username')
+        }
+        finally {
+            setEditUsername(false)
+            setNewUsername({})
+        }
+
+    }
 
     const oldPasswordInput = (e) => {
         setOldPassword(e.target.value)
@@ -77,27 +111,46 @@ const Profile = () => {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex flex-col text-[#202142] grow">
+                                                <div className="flex flex-col justify-center text-[#202142] grow">
 
                                                     <div className="mb-6 w-full">
                                                         <label htmlFor="first_name"
-                                                            className="block mb-2 text-sm font-medium text-neutral-900 dark:text-white">Your name</label>
-                                                        <input type="text" id="first_name"
-                                                            className="bg-orange-50 border border-orange-300 text-neutral-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5 "
-                                                            placeholder="Your first name" value="Jane" required />
-                                                    </div>
-
-                                                    <div className="mb-6">
-                                                        <label htmlFor="message"
-                                                            className="block mb-2 text-sm font-medium text-neutral-900 dark:text-white">Bio</label>
-                                                        <textarea id="message" rows="4"
-                                                            className="block p-2.5 w-full text-sm text-neutral-900 bg-orange-50 rounded-lg border border-orange-300 focus:ring-orange-500 focus:border-orange-500 "
-                                                            placeholder="Write your bio here..."></textarea>
+                                                            className="block mb-2 text-lg font-semibold text-neutral-900">Your name</label>
+                                                        {
+                                                            editUsername
+                                                                ? <input type="text" id="first_name"
+                                                                    className="bg-orange-50 border border-orange-300 text-neutral-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 placeholder:text-neutral-600 block w-full p-2.5 "
+                                                                    placeholder={userProfile.user_username}
+                                                                    onChange={(e) => { setNewUsername({ newUsername: e.target.value }) }}
+                                                                    required />
+                                                                : <p className="bg-orange-50 border text-neutral-900 text-sm rounded-lg block w-full p-2.5 ">{userProfile.user_username}</p>
+                                                        }
                                                     </div>
 
                                                     <div className="flex justify-end">
-                                                        <button type="submit"
-                                                            className="text-neutral-50 bg-orange-500  hover:bg-orange-600 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-orange-600">Save</button>
+                                                        {
+                                                            editUsername
+                                                                ? <>
+                                                                    <button
+                                                                        className="text-neutral-50 bg-red-500  hover:bg-red-600 active:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 mr-4 text-center dark:bg-orange-600"
+                                                                        onClick={() => { setEditUsername(false) }}
+                                                                    >
+                                                                        Cancel
+                                                                    </button>
+                                                                    <button
+                                                                        className="text-neutral-50 bg-green-500  hover:bg-green-600 active:bg-green-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-orange-600"
+                                                                        onClick={() => { onUsernameSave() }}
+                                                                    >
+                                                                        Save
+                                                                    </button>
+                                                                </>
+                                                                : <button
+                                                                    className="text-neutral-50 bg-orange-500  hover:bg-orange-600 active:bg-orange-700 font-medium rounded-lg text-sm w-full sm:w-auto px-10 py-2.5 text-center dark:bg-orange-600"
+                                                                    onClick={() => { setEditUsername(true) }}
+                                                                >
+                                                                    Edit
+                                                                </button>
+                                                        }
                                                     </div>
 
                                                 </div>
