@@ -136,7 +136,13 @@ const Review = () => {
                                                     </thead>
                                                     {
                                                         reportData.length === 0
-                                                            ? null
+                                                            ? <tbody>
+                                                                <tr>
+                                                                    <td colSpan={5}>
+                                                                        <p className='text-xl text-center'>Nothing to be reviewed yet...</p>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
                                                             : <tbody>
                                                                 {
                                                                     reportData

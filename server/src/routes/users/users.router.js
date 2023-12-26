@@ -9,7 +9,8 @@ const {
     httpSaveReportImage,
     httpForgetPassword,
     httpResetPassword,
-    httpCreateReview
+    httpCreateReview,
+    httpChangePassword
 } = require('../../controllers/users/users.controller')
 
 const usersRouter = express.Router()
@@ -23,5 +24,6 @@ usersRouter.post('/report', httpCreateReport)
 usersRouter.get('/report/:userId', httpGetAllReport)
 usersRouter.post('/save-report-image/:reportId', httpSaveReportImage)
 usersRouter.post('/review', httpCreateReview)
+usersRouter.post('/change-password', httpChangePassword)
 
 module.exports = usersRouter

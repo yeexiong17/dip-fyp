@@ -81,8 +81,8 @@ function LoginForm() {
                         <label className='ml-2 font-medium text-base' htmlFor="remember">Remember me</label>
                     </div>
 
-                    <Link to="/forget-password">
-                        <button className='font-medium text-base text-orange-500'>Forgot password?</button>
+                    <Link to="/forget-password" className='font-medium text-base text-orange-500 hover:underline'>
+                        Forgot password?
                     </Link>
                 </div>
 
@@ -94,8 +94,8 @@ function LoginForm() {
 
                 <div className='mt-8 flex justify-center items-center'>
                     <p className='font-medium text-base'>Don't have an account?</p>
-                    <Link to="/signup">
-                        <button className='ml-2 font-medium text-base text-orange-500'>Sign up</button>
+                    <Link to="/signup" className='ml-2 font-medium text-base text-orange-500 hover:underline'>
+                        Sign Up
                     </Link>
                 </div>
 
@@ -105,12 +105,12 @@ function LoginForm() {
 
                 <div className='mt-3 flex justify-center items-center'>
                     <p className='font-medium text-base'>Admin Login</p>
-                    <Link to="/admin/login">
-                        <button className='ml-2 font-medium text-base text-orange-500'>Here</button>
+                    <Link to="/admin/login" className='ml-2 font-medium text-base text-orange-500 hover:underline'>
+                        Here
                     </Link>
                 </div>
             </div>
-        </form>
+        </form >
 
     )
 }

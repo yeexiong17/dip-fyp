@@ -12,7 +12,7 @@ const Profile = () => {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [isGeneralTabChecked, setGeneralTabChecked] = useState(true);
 
-    const { userProfile, setUserProfile } = useAuthContext()
+    const { userProfile, setUserProfile, navigate } = useAuthContext()
 
     const handleGeneralTabClick = () => {
         setGeneralTabChecked(true)
@@ -22,10 +22,45 @@ const Profile = () => {
         setGeneralTabChecked(false)
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
+    const changePassword = async () => {
 
-        // Add your logic here for handling form submission with the input values
+        if (newPassword !== confirmPassword) {
+            return alert('New password does not match with confirm password')
+        }
+
+        const passwordObject = {
+            userId: userProfile.user_id,
+            oldPassword: oldPassword,
+            newPassword: confirmPassword
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/user/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(passwordObject)
+            })
+
+            if (response.ok) {
+                const responseJson = await response.json()
+                alert(responseJson.message)
+
+                setOldPassword('')
+                setNewPassword('')
+                setConfirmPassword('')
+                navigate('/')
+            }
+            else {
+                const responseJson = await response.json()
+                alert(responseJson.message)
+            }
+        }
+        catch (error) {
+            console.log(error)
+        }
+
     }
 
     const onUsernameSave = async () => {
@@ -179,21 +214,21 @@ const Profile = () => {
                                 <div className='grow'>
                                     <div className='flex items-center mb-4'>
                                         <label className='text-lg font-bold text-neutral-800 mr-8 w-56'>Old Password:</label>
-                                        <input type="text" placeholder="Enter old password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={oldPasswordInput} />
+                                        <input type="text" placeholder="Enter old password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={(e) => setOldPassword(e.target.value)} />
                                     </div>
                                     <div className='flex items-center mb-4'>
                                         <label className='text-lg font-bold text-neutral-800 mr-8 w-56'>New Password:</label>
-                                        <input type="text" placeholder="Enter new password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={newPasswordInput} />
+                                        <input type="text" placeholder="Enter new password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={(e) => setNewPassword(e.target.value)} />
                                     </div>
                                     <div className='flex items-center mb-4'>
                                         <label className='text-lg font-bold text-neutral-800 mr-8 w-56'>Confirm New Password:</label>
-                                        <input type="text" placeholder="Confirm new password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={confirmPasswordInput} />
+                                        <input type="text" placeholder="Confirm new password here" className=" input input-bordered input-sm w-full max-w-xs" onChange={(e) => setConfirmPassword(e.target.value)} />
                                     </div>
                                 </div>
                             </div>
 
                             <div>
-                                <button className={`btn text-neutral-50 ${oldPassword == '' || newPassword == '' || confirmPassword == '' ? 'btn-disabled' : 'btn-success'}`}>Update Password</button>
+                                <button onClick={() => changePassword()} className={`btn text-neutral-50 ${oldPassword == '' || newPassword == '' || confirmPassword == '' ? 'btn-disabled' : 'btn-success'}`}>Update Password</button>
                             </div>
                         </div>
 

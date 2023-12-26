@@ -55,25 +55,33 @@ function Tracking() {
               </tr>
             </thead>
             <tbody>
-              {reportData.map((report) => (
-                <tr key={report.report_id}>
-                  <td className="py-2 text-center">{report.report_id}</td>
-                  <td className="py-2 text-center">{report.report_category}</td>
-                  <td className="py-2 text-center">{report.report_venue}</td>
-                  <td className="py-2 text-center">
-                    <span className="text-gray-600">{report.report_status}</span>
-                  </td>
-                  <td className="py-2 text-center">{report.report_created_date.toString().split('T')[0]}</td>
-                  <td className="py-2 text-center">
-                    <button
-                      className="bg-orange-500 text-white px-4 py-2 rounded"
-                      onClick={() => viewDetails(report)}
-                    >
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {
+                reportData.length == 0
+                  ? <tr>
+                    <td colSpan={6}>
+                      <p className='mt-4 text-xl text-center'>Nothing to be tracked yet...</p>
+                    </td>
+                  </tr>
+                  : reportData.map((report) => (
+                    <tr key={report.report_id}>
+                      <td className="py-2 text-center">{report.report_id}</td>
+                      <td className="py-2 text-center">{report.report_category}</td>
+                      <td className="py-2 text-center">{report.report_venue}</td>
+                      <td className="py-2 text-center">
+                        <span className="text-gray-600">{report.report_status}</span>
+                      </td>
+                      <td className="py-2 text-center">{report.report_created_date.toString().split('T')[0]}</td>
+                      <td className="py-2 text-center">
+                        <button
+                          className="bg-orange-500 text-white px-4 py-2 rounded"
+                          onClick={() => viewDetails(report)}
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+              }
             </tbody>
           </table>
         </div>

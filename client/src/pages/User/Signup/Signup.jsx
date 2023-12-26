@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import service from "../../../asset/service.jpg"
 
 import { useAuthContext } from '../../../MyContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Signup() {
 
@@ -69,7 +69,7 @@ function Signup() {
             <div className="flex flex-col lg:flex-row w-10/12 lg:w-8/12 bg-white rounded-xl mx-auto shadow-lg overflow-hidden">
                <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-12 bg-no-repeat bg-contain bg-center" style={{ backgroundImage: `url(${service})` }}>
                </div>
-               <div className="w-full lg:w-1/2 py-16 px-12">
+               <div className="flex flex-col w-full lg:w-1/2 py-12 px-12">
                   <h2 className="text-3xl mb-4">Register</h2>
                   <p className="mb-4">Create your account.</p>
 
@@ -150,6 +150,9 @@ function Signup() {
                         </button>
                      </div>
                   </form>
+                  <div className='mt-6'>
+                     <p className='text-center'>Have an account? <a className='text-orange-600 hover:underline' href='/login'>Login Here</a></p>
+                  </div>
                </div>
             </div>
          </div>

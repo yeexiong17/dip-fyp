@@ -8,10 +8,11 @@ const {
     saveReportImage,
     forgetPassword,
     getUserById,
-    createReview
+    createReview,
 } = require('../../models/users/users.model')
 
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 var nodemailer = require('nodemailer')
 
 const JWT_SECRET = 'wkfj4oj(j3j_fjej224()j3nnjt[kfef[]wm2o4j5nmo3mme?eowfkgrk?fmemmo[]feokoofekm4933ojfegnmzo'
@@ -466,6 +467,28 @@ async function httpCreateReview(req, res) {
     }
 }
 
+async function httpChangePassword(req, res) {
+    const { userId, oldPassword, newPassword } = req.body
+
+    const user = await getUserById(userId)
+
+    const comparePassword = bcrypt.compareSync(oldPassword, user[0][0].user_password)
+
+    if (comparePassword) {
+        try {
+            const result = await updatePassword(userId, newPassword)
+
+            return res.status(200).json({ result, message: 'Password Changed Successfully' })
+        }
+        catch (error) {
+            return res.status(400).json({ error })
+        }
+    }
+
+    return res.status(401).json({ message: 'Old Password Is Incorrect' })
+
+}
+
 module.exports = {
     httpCreateNewUser,
     httpLoginUser,
@@ -475,5 +498,6 @@ module.exports = {
     httpSaveReportImage,
     httpForgetPassword,
     httpResetPassword,
-    httpCreateReview
+    httpCreateReview,
+    httpChangePassword
 }

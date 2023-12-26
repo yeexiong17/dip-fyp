@@ -74,12 +74,14 @@ const Menu = () => {
                 <div className="max-w-3xl mx-auto m-16">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7 ">
                         {categories.map(category => (
-                            <div key={category.id} className="bg-white p-4 rounded shadow-md text-center active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform">
-                                <Link to='/report' className='flex-grow-0' onClick={() => setReportCategory(category.name)}>
+                            <Link to='/report' key={category.id} className='flex-grow-0' onClick={() => setReportCategory(category.name)}>
+                                <div className="bg-white p-4 rounded shadow-md text-center active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform">
+
                                     <img src={category.image} alt={category.name} className="mx-auto w-20 object-center mb-4" />
-                                </Link>
-                                <h2 className="text-base font-semibold align-bottom ">{category.name}</h2>
-                            </div>
+                                    <h2 className="text-base font-semibold align-bottom ">{category.name}</h2>
+                                </div>
+                            </Link>
+
                         ))}
                     </div>
                 </div>

@@ -134,5 +134,5 @@ module.exports = {
     forgetPassword,
     getUserById,
     updatePassword,
-    createReview
+    createReview,
 }
