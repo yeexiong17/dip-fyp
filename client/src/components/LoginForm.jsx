@@ -29,7 +29,7 @@ function LoginForm() {
                 body: JSON.stringify(inputs)
             });
             if (response.ok) {
-                const responseJson = await response.json();
+                const responseJson = await response.json()
 
                 if (responseJson.user) {
                     userLogin(responseJson.user)
@@ -41,7 +41,7 @@ function LoginForm() {
         } catch (error) {
             console.error('Error during login:', error)
         } finally {
-            setIsLoading(false); // Set loading state to false regardless of success or failure
+            setIsLoading(false)
         }
     }
 
@@ -81,7 +81,7 @@ function LoginForm() {
                         <label className='ml-2 font-medium text-base' htmlFor="remember">Remember me</label>
                     </div>
 
-                    <Link to="/forgetpw">
+                    <Link to="/forget-password">
                         <button className='font-medium text-base text-orange-500'>Forgot password?</button>
                     </Link>
                 </div>

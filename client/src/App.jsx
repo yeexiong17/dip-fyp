@@ -16,6 +16,7 @@ import AdminProfile from './pages/Admin/Profile/Profile'
 import Login from './pages/User/Login/Login'
 import Signup from './pages/User/Signup/Signup'
 import Forgetpw from './pages/User/Forgotpw/Forgetpw'
+import Resetpw from './pages/User/Resetpw/Resetpw'
 import Home from './pages/User/Home/Home'
 import Menu from './pages/User/Menu/Menu'
 import Tracking from './pages/User/Tracking/Tracking'
@@ -40,7 +41,8 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/forgetpw" element={<Forgetpw />} />
+        <Route path="/forget-password" element={<Forgetpw />} />
+        <Route path="/reset-password/:userId/:token" element={<Resetpw />} />
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/about" element={<About />} />
@@ -48,7 +50,7 @@ function App() {
         <Route path="/faq" element={<Faq />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/signup" element={<AdminSignup />} />
-        <Route path="/*" element={<Navigate to="/" />} />
+        <Route path="/*" element={<Navigate to="/login" />} />
         <Route path="/admin/*" element={<Navigate to="/login" />} />
 
         {

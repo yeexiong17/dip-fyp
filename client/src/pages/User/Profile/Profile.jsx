@@ -35,7 +35,7 @@ const Profile = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8000/user/update/${userProfile.user_id}`, {
+            const response = await fetch(`http://localhost:8000/user/update-username/${userProfile.user_id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

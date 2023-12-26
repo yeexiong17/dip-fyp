@@ -66,7 +66,7 @@ function Form() {
                 }
 
                 try {
-                    const response = await fetch(`http://localhost:8000/user/saveReportImage/${reportId}`, {
+                    const response = await fetch(`http://localhost:8000/user/save-report-image/${reportId}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
