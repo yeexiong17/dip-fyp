@@ -12,6 +12,8 @@ import Dashboard from './pages/Admin/Dashboard/Dashboard'
 import Incoming from './pages/Admin/Incoming/Incoming'
 import AllReport from './pages/Admin/AllReport/AllReport'
 import AdminProfile from './pages/Admin/Profile/Profile'
+import AdminForgetpw from './pages/Admin/AdminForgetpw/AdminForgetpw'
+import AdminResetpw from './pages/Admin/AdminResetpw/AdminResetpw'
 
 import Login from './pages/User/Login/Login'
 import Signup from './pages/User/Signup/Signup'
@@ -50,8 +52,10 @@ function App() {
         <Route path="/faq" element={<Faq />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/signup" element={<AdminSignup />} />
+        <Route path="/admin/forget-password" element={<AdminForgetpw />} />
+        <Route path="/admin/reset-password/:adminId/:token" element={<AdminResetpw />} />
         <Route path="/*" element={<Navigate to="/login" />} />
-        <Route path="/admin/*" element={<Navigate to="/login" />} />
+        <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
 
         {
           userSignIn && !adminSignIn

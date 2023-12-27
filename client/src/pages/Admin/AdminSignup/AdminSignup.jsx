@@ -1,10 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
+import { useAuthContext } from '../../../MyContext';
 
 function AdminSignup() {
 
-    const [inputs, setInputs] = useState({ email: "", password: "", number: "" });
+    const [inputs, setInputs] = useState({ name: "", email: "", password: "", secretCode: "" });
+
+    const { adminLogin } = useAuthContext()
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -12,10 +15,37 @@ function AdminSignup() {
         setInputs(values => ({ ...values, [name]: value }))
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        location.href = '/admin/dashboard'
+        if (inputs.password !== inputs.confirmPassword) {
+            return alert('Password does not match')
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/admin/sign-up', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(inputs)
+            })
+
+            if (response.ok) {
+                const responseJson = await response.json()
+                adminLogin(responseJson.cleanAdmin)
+
+                alert(responseJson.message)
+            }
+            else {
+                const responseJson = await response.json()
+
+                alert(responseJson.message)
+            }
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -26,7 +56,19 @@ function AdminSignup() {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Create an account
                         </h1>
-                        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+                        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
+                            <div>
+                                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    Name
+                                </label>
+                                <input
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    type="text"
+                                    name='name'
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Email
@@ -36,7 +78,6 @@ function AdminSignup() {
                                     placeholder="name@company.com"
                                     type="email"
                                     name='email'
-                                    value={inputs.email}
                                     onChange={handleChange}
                                     required
                                 />
@@ -49,7 +90,6 @@ function AdminSignup() {
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     type="password"
                                     name='password'
-                                    value={inputs.password}
                                     onChange={handleChange}
                                     required
                                 />
@@ -61,8 +101,7 @@ function AdminSignup() {
                                 <input
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     type="password"
-                                    name='password'
-                                    value={inputs.password}
+                                    name='confirmPassword'
                                     onChange={handleChange}
                                     required
                                 />
@@ -74,28 +113,10 @@ function AdminSignup() {
                                 <input
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     type='number'
-                                    name='number'
-                                    value={inputs.number}
+                                    name='secretCode'
                                     onChange={handleChange}
                                     required
                                 />
-                            </div>
-
-                            <div className="flex items-start">
-                                <div className="flex items-center h-5">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                                        required
-                                    />
-                                </div>
-                                <div className="ml-3 text-sm">
-                                    <label htmlFor="terms" className=" text-gray-500 dark:text-gray-300">
-                                        I accept the <a className="font-medium text-primary-600 hover:underline dark:text-primary-500" href="#">
-                                            Terms and Conditions
-                                        </a>
-                                    </label>
-                                </div>
                             </div>
                             <div>
                                 <button
@@ -107,8 +128,8 @@ function AdminSignup() {
                             </div>
                             <p className="mt-10 text-center text-sm text-gray-500">
                                 Already have an account?{' '}
-                                <Link to="/admin/login">
-                                    <button className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Log In</button>
+                                <Link to="/admin/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                                    Log In
                                 </Link>
                             </p>
                         </form>

@@ -6,14 +6,15 @@ const {
     updatePassword,
     getAllReport,
     saveReportImage,
-    forgetPassword,
     getUserById,
     createReview,
-} = require('../../models/users/users.model')
+    getUserByEmail,
+} = require('../../models/user/user.model')
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 var nodemailer = require('nodemailer')
+var mysqlpool = require('../../../db')
 
 const JWT_SECRET = 'wkfj4oj(j3j_fjej224()j3nnjt[kfef[]wm2o4j5nmo3mme?eowfkgrk?fmemmo[]feokoofekm4933ojfegnmzo'
 
@@ -21,9 +22,15 @@ async function httpCreateNewUser(req, res) {
     try {
         const userData = req.body
 
-        const userId = await createNewUser(userData);
+        const user = await createNewUser(userData);
 
-        res.status(201).json({ userId, message: 'User created successfully' })
+        const cleanUser = {
+            user_id: user.user_id,
+            user_username: user.user_username,
+            user_email: user.user_email
+        }
+
+        res.status(200).json({ cleanUser, message: 'User created successfully' })
     }
     catch (error) {
         console.error(error)
@@ -38,7 +45,14 @@ async function httpLoginUser(req, res) {
         const { comparePassword, user } = await loginUser(userData);
 
         if (comparePassword && user) {
-            res.status(200).json({ message: 'User logged in successfully', user: user[0][0] });
+
+            const cleanUser = {
+                user_id: user.user_id,
+                user_username: user.user_username,
+                user_email: user.user_email
+            }
+
+            res.status(200).json({ cleanUser, message: 'User logged in successfully' });
         } else {
             res.status(401).json({ message: 'Invalid credentials' });
         }
@@ -56,7 +70,7 @@ async function httpUpdateUsername(req, res) {
 
         const result = await updateUsername(newUsername, userId)
 
-        res.status(200).json({ result, message: 'Username updated succesfully' })
+        res.status(200).json({ message: 'Username updated succesfully' })
 
     }
     catch (error) {
@@ -69,12 +83,10 @@ async function httpForgetPassword(req, res) {
     const { email } = req.body
 
     try {
-        const result = await forgetPassword(email)
-
-        const userObject = user[0][0]
+        const userObject = await getUserByEmail(email)
 
         if (!userObject) {
-            res.status(400).json({ message: 'Please enter a valid email address' })
+            return res.status(400).json({ message: 'Please enter a valid email address' })
         }
 
         const secret = JWT_SECRET + userObject.user_password
@@ -82,9 +94,7 @@ async function httpForgetPassword(req, res) {
         const token = jwt.sign({ email: userObject.user_email, id: userObject.user_id }, secret, { expiresIn: '5m' })
 
         const link = `http://localhost:5173/reset-password/${userObject.user_id}/${token}`
-
         console.log(link)
-
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -381,14 +391,10 @@ async function httpResetPassword(req, res) {
     const { userId, token } = req.params
     const { password } = req.body
 
-    console.log(req.params)
-
-    const result = await getUserById(userId)
-
-    const userObject = result[0][0]
+    const userObject = await getUserById(userId)
 
     if (!userObject) {
-        res.status(400).json({ message: 'User Not Found' })
+        return res.status(400).json({ message: 'User Not Found' })
     }
 
     const secret = JWT_SECRET + userObject.user_password
@@ -399,7 +405,7 @@ async function httpResetPassword(req, res) {
 
         const result = await updatePassword(userId, password)
 
-        res.status(200).json({ result, message: 'Password Updated Successfully' })
+        res.status(200).json({ message: 'Password Updated Successfully' })
     }
     catch (error) {
         console.log('Not Verified')
@@ -434,7 +440,7 @@ async function httpSaveReportImage(req, res) {
 
         const result = await saveReportImage(imageUrl, reportId)
 
-        res.status(200).json({ result, message: 'Attachment stored successfully' })
+        res.status(200).json({ message: 'Attachment stored successfully' })
     }
     catch (error) {
         console.log(error)
@@ -445,7 +451,7 @@ async function httpGetAllReport(req, res) {
     const userId = req.params.userId
 
     try {
-        const [result] = await getAllReport(userId)
+        const result = await getAllReport(userId)
         res.status(200).json({ result, message: 'All reports fetched successfully' })
 
     }
@@ -474,11 +480,11 @@ async function httpChangePassword(req, res) {
 
     const comparePassword = bcrypt.compareSync(oldPassword, user[0][0].user_password)
 
-    if (comparePassword) {
+    if (comparePassword && user) {
         try {
             const result = await updatePassword(userId, newPassword)
 
-            return res.status(200).json({ result, message: 'Password Changed Successfully' })
+            return res.status(200).json({ message: 'Password Changed Successfully' })
         }
         catch (error) {
             return res.status(400).json({ error })

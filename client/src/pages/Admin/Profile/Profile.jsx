@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
 
+import { useAuthContext } from '../../../MyContext'
+
 import Sidebar from '../../../components/Sidebar'
 
 const AdminProfile = () => {
+
+    const { adminProfile } = useAuthContext()
 
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
@@ -33,11 +37,11 @@ const AdminProfile = () => {
                         <div className='grow'>
                             <div className='flex items-center mb-4'>
                                 <h1 className='text-lg font-bold text-neutral-800 mr-8'>Name:</h1>
-                                <p className='text-lg text-neutral-800'>Example</p>
+                                <p className='text-lg text-neutral-800'>{adminProfile.admin_name}</p>
                             </div>
                             <div className='flex items-center mb-4'>
                                 <h1 className='text-lg font-bold text-neutral-800 mr-8'>Email:</h1>
-                                <p className='text-lg text-neutral-800'>example@gmail.com</p>
+                                <p className='text-lg text-neutral-800'>{adminProfile.admin_email}</p>
                             </div>
                         </div>
                     </div>

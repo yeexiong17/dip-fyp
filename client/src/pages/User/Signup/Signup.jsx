@@ -52,7 +52,8 @@ function Signup() {
          });
 
          if (response.ok) {
-            userLogin()
+            const responseJson = await response.json()
+            userLogin(responseJson.user)
          } else {
             console.error('Signup failed')
          }

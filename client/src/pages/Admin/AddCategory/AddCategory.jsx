@@ -68,8 +68,8 @@ const AddCategory = () => {
                                     <div className='flex items-center justify-around mt-6'>
                                         <img className='w-20 mt-4' src={Building} alt="Category Image" />
                                         <div className='flex flex-col items-start'>
-                                            <input type="text" id='input_categoryName' placeholder='Type Something...' className="input input-bordered w-full max-w-xs" onChange={(e) => { setCategoryName(e.target.value) }} />
-                                            <input type="file" id="input_image" className="file-input file-input-bordered w-full max-w-xs mt-2" onChange={handleFileChange} />
+                                            <input type="text" id='input_categoryName' placeholder='Type Something...' className="input input-bordered w-full max-w-xs" onChange={(e) => { setCategoryName(e.target.value) }} required />
+                                            <input type="file" id="input_image" className="file-input file-input-bordered w-full max-w-xs mt-2" onChange={handleFileChange} required />
                                         </div>
                                     </div>
                                     <div className='flex items-center justify-center mt-8'>

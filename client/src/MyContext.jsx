@@ -8,14 +8,13 @@ const ContextProvider = ({ children }) => {
     const [userSignIn, setUserSignIn] = useState(false)
     const [adminSignIn, setAdminSignIn] = useState(false)
     const [userProfile, setUserProfile] = useState(null)
+    const [adminProfile, setAdminProfile] = useState(null)
 
     const [reportCategory, setReportCategory] = useState(null)
 
     const navigate = useNavigate()
 
     const userLogin = (userProfile) => {
-        // Your login logic here
-
         setUserProfile(userProfile)
         setUserSignIn(true)
         setAdminSignIn(false)
@@ -23,19 +22,19 @@ const ContextProvider = ({ children }) => {
     }
 
     const userLogout = () => {
-        // Your logout logic here
         setUserSignIn(false)
         setUserProfile(null)
         location.href = '/login'
     }
 
-    const adminLogin = () => {
-        // Admin login logic here
+    const adminLogin = (adminProfile) => {
+        setAdminProfile(adminProfile)
         setAdminSignIn(true)
+        setUserSignIn(false)
+        navigate('/admin/dashboard')
     }
 
     const adminLogout = () => {
-        // Admin logout logic here
         setAdminSignIn(false)
     }
 
@@ -47,6 +46,7 @@ const ContextProvider = ({ children }) => {
         setUserProfile,
         adminLogin,
         adminLogout,
+        adminProfile,
         adminSignIn,
         reportCategory,
         setReportCategory,

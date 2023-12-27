@@ -3,15 +3,21 @@ const bcrypt = require('bcryptjs')
 var mysqlpool = require('../../../db')
 
 async function getUserByEmail(email) {
-    return user = await mysqlpool.query(
-        'SELECT user_id, user_username, user_email, user_password FROM user WHERE user_email = ?', [email]
+    user = await mysqlpool.query(
+        'SELECT user_id, user_username, user_email, user_password FROM user WHERE user_email = ?',
+        [email]
     )
+
+    return user[0][0]
 }
 
 async function getUserById(userId) {
-    return user = await mysqlpool.query(
-        'SELECT user_id, user_username, user_email, user_password FROM user WHERE user_id = ?', [userId]
+    user = await mysqlpool.query(
+        'SELECT user_id, user_username, user_email, user_password FROM user WHERE user_id = ?',
+        [userId]
     )
+
+    return user[0][0]
 }
 
 async function createNewUser(userData) {
@@ -29,7 +35,9 @@ async function createNewUser(userData) {
         [fullname, email, hashedPassword]
     )
 
-    return result.insertId
+    const user = await getUserById(result.insertId)
+
+    return user
 }
 
 async function loginUser(userData) {
@@ -58,12 +66,6 @@ async function updateUsername(newName, userId) {
     );
 
     return result
-}
-
-async function forgetPassword(email) {
-    const user = await getUserByEmail(email)
-
-    return user
 }
 
 async function updatePassword(userId, newPassword) {
@@ -105,7 +107,7 @@ async function saveReportImage(image, reportId) {
 }
 
 async function getAllReport(userId) {
-    return report = await mysqlpool.query(
+    return [report] = await mysqlpool.query(
         `SELECT * FROM report WHERE user_id = ${userId};`
     )
 }
@@ -131,8 +133,8 @@ module.exports = {
     updateUsername,
     saveReportImage,
     getAllReport,
-    forgetPassword,
     getUserById,
+    getUserByEmail,
     updatePassword,
     createReview,
 }

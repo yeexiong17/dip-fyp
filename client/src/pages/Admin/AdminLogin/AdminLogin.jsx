@@ -2,10 +2,13 @@ import React from 'react';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
 import admin from '../../../asset/admin.png';
+import { useAuthContext } from '../../../MyContext';
 
 function AdminLogin() {
 
   const [inputs, setInputs] = useState({ email: "", password: "" });
+
+  const { adminLogin } = useAuthContext()
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -13,10 +16,27 @@ function AdminLogin() {
     setInputs(values => ({ ...values, [name]: value }))
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    location.href = "/admin/dashboard";
+    const response = await fetch('http://localhost:8000/admin/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inputs)
+    })
+
+    if (response.ok) {
+      const responseJson = await response.json()
+      adminLogin(responseJson.cleanAdmin)
+      alert(responseJson.message)
+    }
+    else {
+      const responseJson = await response.json()
+
+      alert(responseJson.message)
+    }
   }
 
   return (
@@ -43,7 +63,6 @@ function AdminLogin() {
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 type="email"
                 name='email'
-                value={inputs.email}
                 onChange={handleChange}
                 required
               />
@@ -56,7 +75,7 @@ function AdminLogin() {
                 Password
               </label>
               <div className="text-sm">
-                <Link to="/forgetpw">
+                <Link to="/admin/forget-password">
                   <button className="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</button>
                 </Link>
               </div>
@@ -66,7 +85,6 @@ function AdminLogin() {
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 type='password'
                 name='password'
-                value={inputs.password}
                 onChange={handleChange}
                 required
               />
