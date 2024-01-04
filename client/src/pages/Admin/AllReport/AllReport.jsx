@@ -121,6 +121,16 @@ const AllReport = () => {
         setFileSelected(!!e.target.files.length) // Set to true if files are selected, false otherwise
     }
 
+    const handleCloseModal = () => {
+        if (!isLoading) {
+            const input_image = document.querySelector('#input_image')
+            input_image.value = ''
+            setFileSelected(false)
+            setCompletedImage(null)
+            document.getElementById('my_modal_1').close()
+        }
+    }
+
     const handleCompleted = async (event, report) => {
         event.stopPropagation()
 
@@ -177,13 +187,8 @@ const AllReport = () => {
                         console.error(error)
                     }
                     finally {
-                        const input_image = document.querySelector('#input_image')
-                        input_image.value = ''
-                        setFileSelected(false)
-                        setCompletedImage(null)
                         setIsLoading(false)
-                        document.getElementById('my_modal_1').close();
-
+                        handleCloseModal()
                         console.log(downloadUrl)
                     }
                 }
@@ -256,7 +261,7 @@ const AllReport = () => {
                                                                                     <h3 className="font-bold text-lg">Upload a photo proof of repair</h3>
                                                                                     <div className="modal-action flex flex-col items-center">
                                                                                         <form method="dialog" className='w-full'>
-                                                                                            <button type={isLoading ? 'button' : ''} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                                                                            <button onClick={() => { handleCloseModal() }} type={isLoading ? 'button' : ''} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                                                                             <input
                                                                                                 type="file"
                                                                                                 id="input_image"
