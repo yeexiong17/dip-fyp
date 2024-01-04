@@ -214,15 +214,15 @@ const Profile = () => {
                                 <div className='grow'>
                                     <div className='flex items-center mb-4'>
                                         <label className='text-lg font-bold text-neutral-800 mr-8 w-56'>Old Password:</label>
-                                        <input type="text" placeholder="Enter old password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={(e) => setOldPassword(e.target.value)} />
+                                        <input type="password" placeholder="Enter old password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={(e) => setOldPassword(e.target.value)} />
                                     </div>
                                     <div className='flex items-center mb-4'>
                                         <label className='text-lg font-bold text-neutral-800 mr-8 w-56'>New Password:</label>
-                                        <input type="text" placeholder="Enter new password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={(e) => setNewPassword(e.target.value)} />
+                                        <input type="password" placeholder="Enter new password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={(e) => setNewPassword(e.target.value)} />
                                     </div>
                                     <div className='flex items-center mb-4'>
                                         <label className='text-lg font-bold text-neutral-800 mr-8 w-56'>Confirm New Password:</label>
-                                        <input type="text" placeholder="Confirm new password here" className=" input input-bordered input-sm w-full max-w-xs" onChange={(e) => setConfirmPassword(e.target.value)} />
+                                        <input type="password" placeholder="Confirm new password here" className=" input input-bordered input-sm w-full max-w-xs" onChange={(e) => setConfirmPassword(e.target.value)} />
                                     </div>
                                 </div>
                             </div>

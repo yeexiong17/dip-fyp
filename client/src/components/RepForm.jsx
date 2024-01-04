@@ -12,6 +12,7 @@ function Form() {
 
     const [inputs, setInputs] = useState({})
     const [image, setImage] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     const { reportCategory, userProfile, navigate } = useAuthContext()
 
@@ -35,7 +36,7 @@ function Form() {
 
     const storeImage = async (reportId) => {
 
-        const imageRef = ref(storage, `user/report/${image.name + v4()}`)
+        const imageRef = ref(storage, `report/make/${image.name + v4()}`)
 
         const uploadTask = uploadBytesResumable(imageRef, image)
 
@@ -94,6 +95,8 @@ function Form() {
 
         event.preventDefault();
 
+        setIsLoading(true)
+
         if (image == null) {
             return alert('Please attach an image or video')
         }
@@ -122,6 +125,7 @@ function Form() {
         finally {
             setImage(null)
             navigate('/menu')
+            setIsLoading(false)
         }
     }
 
@@ -273,7 +277,11 @@ function Form() {
                                     type="submit"
                                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
-                                    Submit
+                                    {
+                                        isLoading
+                                            ? <span class="loading loading-spinner loading-md"></span>
+                                            : 'Submit'
+                                    }
                                 </button>
                             </div>
                         </form>

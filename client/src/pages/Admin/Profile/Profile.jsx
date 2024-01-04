@@ -6,7 +6,7 @@ import Sidebar from '../../../components/Sidebar'
 
 const AdminProfile = () => {
 
-    const { adminProfile } = useAuthContext()
+    const { adminProfile, navigate } = useAuthContext()
 
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
@@ -22,6 +22,45 @@ const AdminProfile = () => {
 
     const confirmPasswordInput = (e) => {
         setConfirmPassword(e.target.value)
+    }
+
+    const changePassword = async () => {
+        if (newPassword !== confirmPassword) {
+            return alert('New password does not match with confirm password')
+        }
+
+        const passwordObject = {
+            adminId: adminProfile.admin_id,
+            oldPassword: oldPassword,
+            newPassword: confirmPassword
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/admin/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(passwordObject)
+            })
+
+            if (response.ok) {
+                const responseJson = await response.json()
+                alert(responseJson.message)
+
+                setOldPassword('')
+                setNewPassword('')
+                setConfirmPassword('')
+                navigate('/admin/dashboard')
+            }
+            else {
+                const responseJson = await response.json()
+                alert(responseJson.message)
+            }
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -54,21 +93,21 @@ const AdminProfile = () => {
                         <div className='grow'>
                             <div className='flex items-center mb-4'>
                                 <label className='text-lg font-bold text-neutral-800 mr-8 w-56'>Old Password:</label>
-                                <input type="text" placeholder="Enter old password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={oldPasswordInput} />
+                                <input type="password" placeholder="Enter old password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={oldPasswordInput} />
                             </div>
                             <div className='flex items-center mb-4'>
                                 <label className='text-lg font-bold text-neutral-800 mr-8 w-56'>New Password:</label>
-                                <input type="text" placeholder="Enter new password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={newPasswordInput} />
+                                <input type="password" placeholder="Enter new password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={newPasswordInput} />
                             </div>
                             <div className='flex items-center mb-4'>
                                 <label className='text-lg font-bold text-neutral-800 mr-8 w-56'>Confirm New Password:</label>
-                                <input type="text" placeholder="Confirm new password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={confirmPasswordInput} />
+                                <input type="password" placeholder="Confirm new password here..." className="input input-bordered input-sm w-full max-w-xs" onChange={confirmPasswordInput} />
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <button className={`btn text-neutral-50 ${oldPassword == '' || newPassword == '' || confirmPassword == '' ? 'btn-disabled' : 'btn-success'}`}>Update Password</button>
+                        <button onClick={() => { changePassword() }} className={`btn text-neutral-50 ${oldPassword == '' || newPassword == '' || confirmPassword == '' ? 'btn-disabled' : 'btn-success'}`}>Update Password</button>
                     </div>
                 </div>
             </div>

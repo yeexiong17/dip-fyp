@@ -2,95 +2,134 @@ import React, { useState, useEffect } from 'react';
 
 import Sidebar from '../../../components/Sidebar';
 
-const reportData = [
-    {
-        reportId: 0,
-        faultCategory: 'Electrical',
-        venue: 'FCI',
-        level: 3,
-        area: 'Lab',
-        description: 'Lab L234 plug unusable',
-        dateReported: '12/3/2023',
-        reportStatus: 'Progressing',
-        completedImage: false,
-        userId: 0
-    },
-    {
-        reportId: 1,
-        faultCategory: 'Aircond Service',
-        venue: 'FCM',
-        level: 3,
-        area: 'Office',
-        description: 'Office O123 aircond needs service, not cold',
-        dateReported: '12/3/2023',
-        reportStatus: 'Progressing',
-        completedImage: false,
-        userId: 1
-    },
-    {
-        reportId: 2,
-        faultCategory: 'Electrical',
-        venue: 'FOE',
-        level: 3,
-        area: 'Classroom',
-        description: 'Classroom C345 ceiling light is flicking',
-        dateReported: '12/3/2023',
-        reportStatus: 'Completed',
-        completedImage: false,
-        userId: 2
-    },
-];
-
-const userData = [
-    {
-        userId: 0,
-        username: 'John',
-        email: 'john@gamil.com',
-        reportId: [0]
-    },
-    {
-        userId: 1,
-        username: 'Jake',
-        email: 'jake@gamil.com',
-        reportId: [1]
-    },
-    {
-        userId: 2,
-        username: 'Jess',
-        email: 'jess@gamil.com',
-        reportId: [2]
-    }
-]
-
 const Incoming = () => {
 
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [selectedReport, setSelectedReport] = useState(null)
+    const [incomingReport, setIncomingReport] = useState([])
+    const [userData, setUserData] = useState(null)
+    const [userId, setUserId] = useState(null)
 
     useEffect(() => {
         if (selectedReport) {
-            console.log(selectedReport)
             setDrawerOpen(!drawerOpen)
         }
+
     }, [selectedReport])
 
-    const handleRowClick = (report) => {
-        if (selectedReport === report) {
-            // If the same row is clicked again, clear the selected report to close the drawer
-            setDrawerOpen(true)
-        } else {
-            setSelectedReport(report)
+    useEffect(() => {
+        // Fetch user data when userId changes
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/admin/get-user-from-report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId }),
+                })
+
+                console.log(userId)
+
+                if (response.ok) {
+                    const responseJson = await response.json()
+                    setUserData(responseJson.userObject)
+                } else {
+                    const responseJson = await response.json()
+                    alert(responseJson.message)
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        if (userId) {
+            fetchUserData()
+        }
+    }, [userId])
+
+    useEffect(() => {
+        // Fetch all reports when the component mounts
+        fetchAllReports();
+
+    }, [])
+
+    const fetchAllReports = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/admin/dashboard-data', {
+                method: 'GET',
+            })
+
+            if (response.ok) {
+                const responseJson = await response.json()
+
+                setIncomingReport(responseJson.allReport.filter((report) => report.report_status == 'Incoming'))
+            } else {
+                const responseJson = await response.json()
+
+                alert(responseJson.message)
+            }
+
+        } catch (error) {
+            console.log(error)
         }
     }
 
-    const handleDecline = (event) => {
-        // Handle Decline button click here
-        event.stopPropagation()
+    const handleRowClick = (report) => {
+        setSelectedReport(report)
+        setUserId(report.user_id)
     }
 
-    const handleAccept = (event) => {
-        // Handle Accept button click here
+    const handleAccept = async (event, report) => {
         event.stopPropagation()
+
+        const response = await fetch('http://localhost:8000/admin/accept-new-report', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ reportId: report.report_id })
+        })
+
+        if (response.ok) {
+            const responseJson = await response.json()
+            fetchAllReports()
+            alert(responseJson.message)
+        }
+        else {
+            const responseJson = await response.json()
+
+            alert(responseJson.message)
+        }
+    }
+
+    const handleReject = async (event, report) => {
+        // Handle Decline button click here
+        event.stopPropagation()
+
+        let confirmSelection = confirm('Are you sure you want to reject this report?')
+
+        if (!confirmSelection) {
+            return
+        }
+
+        const response = await fetch('http://localhost:8000/admin/reject-new-report', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ reportId: report.report_id })
+        })
+
+        if (response.ok) {
+            fetchAllReports()
+            alert(`Report Id: ${report.report_id} has been rejected`)
+        }
+        else {
+            const responseJson = await response.json()
+
+            alert(responseJson.message)
+        }
     }
 
     return (
@@ -105,34 +144,44 @@ const Incoming = () => {
                             <div>
                                 <h1 className='text-2xl font-bold text-neutral-800'>Incoming Report</h1>
                             </div>
-                            <div className={`${Object.keys(reportData).length === 0 ? 'h-fit' : 'h-full'} overflow-y-auto scroll-smooth`}>
+                            <div className={`${Object.keys(incomingReport).length === 0 ? 'h-fit' : 'h-full'} overflow-y-auto scroll-smooth`}>
                                 <table className="table table-pin-rows border-2 bg-neutral-50 shadow-md mt-8">
                                     {/* head */}
                                     <thead>
                                         <tr className='bg-neutral-150 text-neutral-800 text-sm border-b border-neutral-300'>
                                             <th></th>
-                                            <th>Report Type</th>
+                                            <th>Report Category</th>
+                                            <th>Venue</th>
                                             <th>Description</th>
                                             <th>Date Reported</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     {
-                                        Object.keys(reportData).length === 0
+                                        Object.keys(incomingReport).length === 0
                                             ? null
                                             : <tbody>
                                                 {
-                                                    reportData.map((report, i) => (
+                                                    incomingReport.map((report, i) => (
 
-                                                        <tr key={report.reportId} className='hover hover:cursor-pointer' onClick={() => handleRowClick(report)}>
+                                                        <tr key={report.report_id} className='hover hover:cursor-pointer' onClick={() => { handleRowClick(report); setUserId(report.user_id) }}>
                                                             <th>{i + 1}</th>
-                                                            <td>{report.faultCategory}</td>
-                                                            <td className='truncate max-w-xs'>{report.description}</td>
-                                                            <td>{report.dateReported}</td>
+                                                            <td>{report.report_category}</td>
+                                                            <td>{report.report_venue}</td>
+                                                            <td className='truncate max-w-xs'>{report.report_description}</td>
+                                                            <td>
+                                                                {
+                                                                    new Date(report.report_created_date).toLocaleDateString('en-US', {
+                                                                        day: 'numeric',
+                                                                        month: 'long',
+                                                                        year: 'numeric',
+                                                                    })
+                                                                }
+                                                            </td>
                                                             <td>
                                                                 <div>
-                                                                    <button className="btn btn-outline btn-error text-red-500 bg-neutral-50 mr-4 w-20" onClick={handleDecline}>Decline</button>
-                                                                    <button className="btn btn-success text-neutral-50 bg-green-500 hover:bg-green-600 w-20" onClick={handleAccept}>Accept</button>
+                                                                    <button className="btn btn-outline btn-error text-red-500 bg-neutral-50 mr-4 w-20" onClick={((event) => { handleReject(event, report) })}>Reject</button>
+                                                                    <button className="btn btn-success text-neutral-50 bg-green-500 hover:bg-green-600 w-20" onClick={(event) => { handleAccept(event, report) }}>Accept</button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -143,7 +192,7 @@ const Incoming = () => {
                                 </table>
                             </div>
                             {
-                                Object.keys(reportData).length === 0
+                                Object.keys(incomingReport).length === 0
                                     ? <div className='h-fit flex items-center justify-center pt-10'>
                                         <h2 className='text-gray-600 font-bold text-2xl text-center'>Wooohooo! No incoming report available</h2>
                                     </div>
@@ -153,46 +202,62 @@ const Incoming = () => {
                     </div>
                 </div>
                 <div className="drawer-side z-50 overflow-y-auto">
-                    <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay" onClick={() => setDrawerOpen(false)}></label>
+                    <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay" onClick={() => { setDrawerOpen(false); setSelectedReport(null); setUserId(null) }}></label>
                     <ul className="menu p-4 w-96 min-h-full bg-base-200 text-base-content">
                         {/* Sidebar content here */}
                         {
-                            selectedReport
+                            selectedReport && userData
                                 ?
                                 <>
                                     <div>
                                         <h1 className='text-2xl font-bold'>User Info</h1>
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
-                                        <p className='font-bold'>{userData[selectedReport.userId].username}</p>
-                                        <p>{userData[selectedReport.userId].email}</p>
+                                        <p className='font-bold'>{userData.user_username}</p>
+                                        <p>{userData.user_email}</p>
                                     </div>
-                                    <div className='mt-10'>
+                                    <div className='mt-6'>
                                         <h1 className='text-2xl font-bold'>Report Info</h1>
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
-                                        <p className='font-bold'>Fault Category:</p>
-                                        <p className='font-normal mt-2'>{selectedReport.faultCategory}</p>
+                                        <p className='font-bold'>ID:</p>
+                                        <p className='font-normal mt-2'>{selectedReport.report_id}</p>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Category:</p>
+                                        <p className='font-normal mt-2'>{selectedReport.report_category}</p>
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>Venue:</p>
-                                        <p className='font-normal mt-2'>{selectedReport.venue}</p>
+                                        <p className='font-normal mt-2'>{selectedReport.report_venue}</p>
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>Level:</p>
-                                        <p className='font-normal mt-2'>{selectedReport.level}</p>
+                                        <p className='font-normal mt-2'>{selectedReport.report_level}</p>
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>Room/Area:</p>
-                                        <p className='font-normal mt-2'>{selectedReport.area}</p>
+                                        <p className='font-normal mt-2'>{selectedReport.report_room}</p>
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>Description:</p>
-                                        <p className='font-normal mt-2'>{selectedReport.description}</p>
+                                        <p className='font-normal mt-2 break-all'>{selectedReport.report_description}</p>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Status:</p>
+                                        <p className='font-normal mt-2'>{selectedReport.report_status}</p>
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>Date Reported:</p>
-                                        <p className='font-normal mt-2'>{selectedReport.dateReported}</p>
+                                        <p className='font-normal mt-2'>
+                                            {
+                                                new Date(selectedReport.report_created_date).toLocaleDateString('en-US', {
+                                                    day: 'numeric',
+                                                    month: 'long',
+                                                    year: 'numeric',
+                                                })
+                                            }
+                                        </p>
                                     </div>
                                 </>
                                 : null

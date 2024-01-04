@@ -22,7 +22,9 @@ export default function Forgetpw() {
          })
 
          if (response.ok) {
-            console.log('Password Changed successfully')
+            const responseJson = await response.json()
+
+            alert(responseJson.message)
          }
          else {
             const responseJson = await response.json()

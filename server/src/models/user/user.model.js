@@ -107,9 +107,11 @@ async function saveReportImage(image, reportId) {
 }
 
 async function getAllReport(userId) {
-    return [report] = await mysqlpool.query(
+    report = await mysqlpool.query(
         `SELECT * FROM report WHERE user_id = ${userId};`
     )
+
+    return report[0]
 }
 
 async function createReview(report_id, rating1, rating2, comment) {
@@ -126,6 +128,14 @@ async function createReview(report_id, rating1, rating2, comment) {
     return { reviewResult, reportResult }
 }
 
+async function getAllCategory() {
+    const [categoryData] = await mysqlpool.query(
+        'SELECT * from menu'
+    )
+
+    return categoryData
+}
+
 module.exports = {
     createNewUser,
     loginUser,
@@ -137,4 +147,5 @@ module.exports = {
     getUserByEmail,
     updatePassword,
     createReview,
+    getAllCategory
 }

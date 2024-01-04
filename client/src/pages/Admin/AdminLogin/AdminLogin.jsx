@@ -30,7 +30,6 @@ function AdminLogin() {
     if (response.ok) {
       const responseJson = await response.json()
       adminLogin(responseJson.cleanAdmin)
-      alert(responseJson.message)
     }
     else {
       const responseJson = await response.json()

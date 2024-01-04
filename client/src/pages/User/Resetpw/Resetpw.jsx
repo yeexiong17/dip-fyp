@@ -4,7 +4,6 @@ import { useAuthContext } from "../../../MyContext";
 
 export default function Resetpw() {
 
-    const [email, setEmail] = useState()
     const [inputs, setInputs] = useState()
 
     const { navigate } = useAuthContext()

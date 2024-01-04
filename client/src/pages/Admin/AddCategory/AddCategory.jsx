@@ -1,32 +1,20 @@
 import React, { useState, useEffect } from 'react'
+import { v4 } from 'uuid'
+
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { storage } from '../../../../firebase.config'
 
 import Sidebar from '../../../components/Sidebar'
 
 import Building from '../../../asset/building.png'
 
-const category = [
-    {
-        category_id: 1,
-        category_name: 'Power Failure',
-    },
-    {
-        category_id: 2,
-        category_name: 'Water Failure',
-    },
-    {
-        category_id: 3,
-        category_name: 'Cleaning',
-    }
-]
-
 const AddCategory = () => {
 
     const [categoryName, setCategoryName] = useState(null)
     const [fileSelected, setFileSelected] = useState(false)
-
-
-    const onFormSubmit = () => {
-    }
+    const [categoryImage, setCategoryImage] = useState(null)
+    const [categoryData, setCategoryData] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleFileChange = (e) => {
         setFileSelected(!!e.target.files.length) // Set to true if files are selected, false otherwise
@@ -37,11 +25,102 @@ const AddCategory = () => {
     }
 
     const resetForm = (e) => {
-        e.preventDefault()
+        e.stopPropagation()
 
         document.querySelector('#input_image').value = ''
         document.querySelector('#input_categoryName').value = ''
         setCategoryName('')
+    }
+
+    useEffect(() => {
+        getAllCategory()
+    }, [])
+
+    const getAllCategory = async () => {
+        const response = await fetch('http://localhost:8000/admin/get-all-category', {
+            method: 'GET'
+        })
+
+        if (response.ok) {
+            const responseJson = await response.json()
+
+            setCategoryData(responseJson.categoryData)
+        }
+    }
+
+    const onFormSubmit = () => {
+
+        setIsLoading(true)
+
+        try {
+
+            const imageRef = ref(storage, `category/image/${categoryImage.name + v4()}`)
+
+            const uploadTask = uploadBytesResumable(imageRef, categoryImage)
+
+            uploadTask.on("state_changed",
+                (snapshot) => {
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Attachment Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                        case 'paused':
+                            console.log('Upload is paused');
+                            break;
+                        case 'running':
+                            console.log('Attachment Upload is running');
+                            break;
+                    }
+                },
+                (error) => {
+                    // Handle unsuccessful uploads
+                    console.error("Error uploading attachment:", error);
+                },
+                async () => {
+
+                    const downloadUrl = await getDownloadURL(imageRef);
+
+                    const categoryObject = {
+                        category_name: categoryName,
+                        category_image: downloadUrl
+                    }
+
+                    try {
+                        const response = await fetch('http://localhost:8000/admin/create-new-category', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(categoryObject)
+                        })
+
+                        if (response.ok) {
+                            const responseJSON = await response.json()
+                            alert(responseJSON.message)
+                        }
+                    }
+                    catch (error) {
+                        console.error(error)
+                    }
+                    finally {
+                        // Reset Form
+                        document.querySelector('#input_image').value = ''
+                        document.querySelector('#input_categoryName').value = ''
+                        setCategoryName('')
+                        setCategoryImage(null)
+
+                        getAllCategory()
+                        document.getElementById('my_modal_2').close();
+                        setIsLoading(false)
+                        console.log(downloadUrl)
+                    }
+                }
+            )
+
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -61,20 +140,26 @@ const AddCategory = () => {
                         <dialog id="my_modal_2" className="modal">
                             <div className="modal-box">
                                 <form method="dialog">
-                                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                    <button type={isLoading ? 'button' : ''} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                 </form>
                                 <h3 className="font-bold text-lg">Add Category</h3>
-                                <form onSubmit={() => onFormSubmit}>
+                                <form>
                                     <div className='flex items-center justify-around mt-6'>
-                                        <img className='w-20 mt-4' src={Building} alt="Category Image" />
+                                        <img className='w-20 aspect-square mt-4' src={categoryImage ? URL.createObjectURL(categoryImage) : ''} alt="category-image" />
                                         <div className='flex flex-col items-start'>
                                             <input type="text" id='input_categoryName' placeholder='Type Something...' className="input input-bordered w-full max-w-xs" onChange={(e) => { setCategoryName(e.target.value) }} required />
-                                            <input type="file" id="input_image" className="file-input file-input-bordered w-full max-w-xs mt-2" onChange={handleFileChange} required />
+                                            <input type="file" id="input_image" className="file-input file-input-bordered w-full max-w-xs mt-2" onChange={(e) => { handleFileChange(e); setCategoryImage(e.target.files[0]) }} required />
                                         </div>
                                     </div>
                                     <div className='flex items-center justify-center mt-8'>
                                         <button onClick={(e) => resetForm(e)} className="btn btn-outline btn-error min-h-[2.5rem] h-10 px-10 mr-6">Reset</button>
-                                        <button type='submit' className="btn btn-outline btn-success min-h-[2.5rem] h-10 px-10">Save</button>
+                                        <button onClick={() => { onFormSubmit() }} type='button' className="btn btn-outline btn-success min-h-[2.5rem] h-10 px-10">
+                                            {
+                                                isLoading
+                                                    ? <span className="loading loading-spinner loading-md"></span>
+                                                    : 'Save'
+                                            }
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -94,18 +179,18 @@ const AddCategory = () => {
                             </thead>
 
                             {
-                                Object.keys(category).length === 0
+                                Object.keys(categoryData).length === 0
                                     ? null
                                     : <tbody>
                                         {
-                                            category.map((category, i) => (
-                                                <tr key={category.category_id}>
+                                            categoryData.map((category, i) => (
+                                                <tr key={category.menu_id}>
                                                     <th className='w-10'>{i + 1}</th>
                                                     <td className='w-60'>
-                                                        <img className='w-16' src={Building} alt="Category Image" />
+                                                        <img className='w-16 aspect-square' src={category.menu_image} alt="Category-Image" />
                                                     </td>
                                                     <td className='w-60'>
-                                                        <p>{category.category_name}</p>
+                                                        <p>{category.menu_name}</p>
                                                     </td>
 
                                                     <td className='w-60' align='center'>

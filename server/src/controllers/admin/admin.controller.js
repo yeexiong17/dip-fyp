@@ -1,9 +1,18 @@
 const {
-    createAdmin,
-    adminLogin,
-    getAdminByEmail,
-    getAdminById,
-    adminResetPassword
+  createAdmin,
+  adminLogin,
+  getAdminByEmail,
+  getAdminById,
+  adminResetPassword,
+  getDashboardData,
+  getUserFromReport,
+  getAllReview,
+  acceptNewReport,
+  rejectNewReport,
+  changePassword,
+  setCompletedImage,
+  createNewCategory,
+  getAllCategory
 } = require('../../models/admin/admin.model')
 
 const jwt = require('jsonwebtoken')
@@ -12,77 +21,77 @@ var nodemailer = require('nodemailer')
 const JWT_SECRET = 'sdwdfe-ff[]fefwf(320ewf-cecv[efewe2])fefef()femwkmllmfimm3235[]jfoi294390t108hgonqrga[]'
 
 async function httpCreateAdmin(req, res) {
-    const { name, email, password, secretCode } = req.body
+  const { name, email, password, secretCode } = req.body
 
-    if (secretCode !== '5') {
-        return res.status(400).json({ message: 'Invalid Secret Code' })
+  if (secretCode !== '5') {
+    return res.status(400).json({ message: 'Invalid Secret Code' })
+  }
+
+  try {
+    const adminObject = await createAdmin(name, email, password)
+
+    const cleanAdmin = {
+      admin_id: adminObject.admin_id,
+      admin_name: adminObject.admin_name,
+      admin_email: adminObject.admin_email
     }
 
-    try {
-        const adminObject = await createAdmin(name, email, password)
-
-        const cleanAdmin = {
-            admin_id: adminObject.admin_id,
-            admin_name: adminObject.admin_name,
-            admin_email: adminObject.admin_email
-        }
-
-        return res.status(200).json({ cleanAdmin, message: 'Admin created successfully' })
-    }
-    catch (error) {
-        return res.status(400).json({ error, message: 'Error while creating admin' })
-    }
+    return res.status(200).json({ cleanAdmin, message: 'Admin created successfully' })
+  }
+  catch (error) {
+    return res.status(400).json({ error, message: 'Error while creating admin' })
+  }
 }
 
 async function httpAdminLogin(req, res) {
-    const { email, password } = req.body
+  const { email, password } = req.body
 
-    const { comparePassword, admin } = await adminLogin(email, password)
+  const { comparePassword, admin } = await adminLogin(email, password)
 
-    const cleanAdmin = {
-        admin_id: admin.admin_id,
-        admin_name: admin.admin_name,
-        admin_email: admin.admin_email
-    }
+  const cleanAdmin = {
+    admin_id: admin.admin_id,
+    admin_name: admin.admin_name,
+    admin_email: admin.admin_email
+  }
 
-    if (comparePassword && admin) {
-        return res.status(200).json({ cleanAdmin, message: 'Admin Login Successfully' })
-    }
+  if (comparePassword && admin) {
+    return res.status(200).json({ cleanAdmin, message: 'Admin Login Successfully' })
+  }
 
-    return res.status(400).json({ message: 'Login Unsuccessful' })
+  return res.status(400).json({ message: 'Login Unsuccessful' })
 }
 
 async function httpAdminForgetPassword(req, res) {
-    const { email } = req.body
+  const { email } = req.body
 
-    try {
-        const adminObject = await getAdminByEmail(email)
+  try {
+    const adminObject = await getAdminByEmail(email)
 
-        if (!adminObject) {
-            return res.status(400).json({ message: 'Please enter a valid email address' })
-        }
+    if (!adminObject) {
+      return res.status(400).json({ message: 'Please enter a valid email address' })
+    }
 
-        const secret = JWT_SECRET + adminObject.admin_password
+    const secret = JWT_SECRET + adminObject.admin_password
 
-        const token = jwt.sign({ email: adminObject.admin_email, id: adminObject.admin_id }, secret, { expiresIn: '15m' })
+    const token = jwt.sign({ email: adminObject.admin_email, id: adminObject.admin_id }, secret, { expiresIn: '15m' })
 
-        const link = `http://localhost:5173/admin/reset-password/${adminObject.admin_id}/${token}`
+    const link = `http://localhost:5173/admin/reset-password/${adminObject.admin_id}/${token}`
 
-        console.log(link)
+    console.log(link)
 
-        var transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: '1211207422@student.mmu.edu.my',
-                pass: 'grwohwgnowgcvfyk'
-            }
-        });
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: '1211207422@student.mmu.edu.my',
+        pass: 'grwohwgnowgcvfyk'
+      }
+    });
 
-        var mailOptions = {
-            from: '1211207422@student.mmu.edu.my',
-            to: email,
-            subject: 'Admin Reset Password Request',
-            html: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    var mailOptions = {
+      from: '1211207422@student.mmu.edu.my',
+      to: email,
+      subject: 'Admin Reset Password Request',
+      html: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml">
               <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -594,51 +603,181 @@ async function httpAdminForgetPassword(req, res) {
                 </table>
               </body>
             </html>`
-        };
+    };
 
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email sent: ' + info.response);
-            }
-        });
-    }
-    catch (error) {
-        return res.status(400).json({ message: 'There\'s an error while sending the link to your email' })
-    }
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  }
+  catch (error) {
+    return res.status(400).json({ message: 'There\'s an error while sending the link to your email' })
+  }
 }
 
 async function httpAdminResetPassword(req, res) {
-    const { adminId, token } = req.params
-    const { password } = req.body
-    console.log(req.params)
-    const adminObject = await getAdminById(adminId)
+  const { adminId, token } = req.params
+  const { password } = req.body
+  console.log(req.params)
+  const adminObject = await getAdminById(adminId)
 
-    if (!adminObject) {
-        return res.status(400).json({ message: 'User Not Found' })
-    }
+  if (!adminObject) {
+    return res.status(400).json({ message: 'User Not Found' })
+  }
 
-    const secret = JWT_SECRET + adminObject.admin_password
+  const secret = JWT_SECRET + adminObject.admin_password
 
-    try {
-        const verify = jwt.verify(token, secret)
-        console.log('Verified')
+  try {
+    const verify = jwt.verify(token, secret)
+    console.log('Verified')
 
-        const result = await adminResetPassword(adminId, password)
+    const result = await adminResetPassword(adminId, password)
 
-        return res.status(200).json({ message: 'Password Updated Successfully' })
-    }
-    catch (error) {
-        console.log('Not Verified')
+    return res.status(200).json({ message: 'Password Updated Successfully' })
+  }
+  catch (error) {
+    console.log('Not Verified')
 
-        return res.status(400).json({ message: 'Link is not verified' })
-    }
+    return res.status(400).json({ message: 'Link is not verified' })
+  }
+}
+
+async function httpGetDashboardData(req, res) {
+  try {
+    const { allReport, allUser } = await getDashboardData()
+
+    return res.status(200).json({ allReport, allUser })
+  }
+  catch (error) {
+    return res.status(404).json({ message: 'Opps... Something wrong while fetching data' })
+  }
+}
+
+async function httpGetUserFromReport(req, res) {
+
+  try {
+    const { userId } = req.body
+
+    const userObject = await getUserFromReport(userId)
+
+    return res.status(200).json({ userObject, message: 'Successfully getting user' })
+  }
+  catch (error) {
+    return res.status(400).json({ message: 'Error getting user' })
+  }
+
+}
+
+async function httpGetAllReview(req, res) {
+  try {
+    const allReview = await getAllReview()
+
+    return res.status(200).json({ allReview, message: 'Review Fetched Successfully' })
+  }
+  catch (err) {
+    return res.status(400).json({ message: 'Unable to fetch review' })
+  }
+}
+
+async function httpAcceptNewReport(req, res) {
+  try {
+    const { reportId } = req.body
+
+    const result = await acceptNewReport(reportId)
+
+    return res.status(200).json({ result, message: `Report ID: ${reportId} Has Been Accepted` })
+
+  }
+  catch (error) {
+    return res.status(400).json({ message: 'Failed to accept report' })
+  }
+
+}
+
+async function httpRejectNewReport(req, res) {
+  try {
+    const { reportId } = req.body
+
+    const result = await rejectNewReport(reportId)
+
+    return res.status(200).json({ result, message: `Report ID: ${reportId} Has Been Rejected` })
+
+  }
+  catch (error) {
+    return res.status(400).json({ message: 'Failed to reject report' })
+  }
+}
+
+async function httpChangePassword(req, res) {
+  const { adminId, oldPassword, newPassword } = req.body
+
+  try {
+    const result = await changePassword(adminId, oldPassword, newPassword)
+
+    return res.status(200).json({ message: 'Password Changed Successfully' })
+  }
+  catch (error) {
+    return res.status(400).json({ error, message: 'Unable To Change Password' })
+  }
+
+}
+
+async function httpSetCompletedImage(req, res) {
+  const { reportId } = req.params
+  const { imageUrl } = req.body
+
+  try {
+    const result = await setCompletedImage(reportId, imageUrl)
+
+    return res.status(200).json({ message: 'Image Stored Succussfully' })
+
+  }
+  catch (error) {
+    return res.status(400).json({ error, message: 'Unable to store url to database' })
+  }
+
+}
+
+async function httpCreateNewCategory(req, res) {
+  const { category_name, category_image } = req.body
+
+  try {
+    const result = await createNewCategory(category_name, category_image)
+
+    return res.status(200).json({ message: 'Category created successfully' })
+  }
+  catch (error) {
+    return res.status(400).json({ message: 'Failed to create category' })
+  }
+}
+
+async function httpGetAllCategory(req, res) {
+
+  try {
+    const categoryData = await getAllCategory()
+
+    return res.status(200).json({ categoryData, message: 'Get all category data successfully' })
+  }
+  catch (error) {
+    return res.status(400).json({ message: 'Unable to get all menu data' })
+  }
 }
 
 module.exports = {
-    httpCreateAdmin,
-    httpAdminLogin,
-    httpAdminForgetPassword,
-    httpAdminResetPassword
+  httpCreateAdmin,
+  httpAdminLogin,
+  httpAdminForgetPassword,
+  httpAdminResetPassword,
+  httpGetDashboardData,
+  httpGetUserFromReport,
+  httpGetAllReview,
+  httpAcceptNewReport,
+  httpRejectNewReport,
+  httpChangePassword,
+  httpSetCompletedImage,
+  httpCreateNewCategory,
+  httpGetAllCategory
 }

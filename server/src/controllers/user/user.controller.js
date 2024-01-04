@@ -9,6 +9,7 @@ const {
     getUserById,
     createReview,
     getUserByEmail,
+    getAllCategory
 } = require('../../models/user/user.model')
 
 const jwt = require('jsonwebtoken')
@@ -381,6 +382,8 @@ async function httpForgetPassword(req, res) {
                 console.log('Email sent: ' + info.response);
             }
         });
+
+        return res.status(200).json({ message: 'Reset Link Has Been Sent To Your Email' })
     }
     catch (error) {
         console.log(error)
@@ -478,7 +481,7 @@ async function httpChangePassword(req, res) {
 
     const user = await getUserById(userId)
 
-    const comparePassword = bcrypt.compareSync(oldPassword, user[0][0].user_password)
+    const comparePassword = bcrypt.compareSync(oldPassword, user.user_password)
 
     if (comparePassword && user) {
         try {
@@ -495,6 +498,20 @@ async function httpChangePassword(req, res) {
 
 }
 
+async function httpGetAllCategory(req, res) {
+
+    try {
+        const categoryData = await getAllCategory()
+
+        return res.status(200).json({ categoryData, message: 'Fetch Category Data Successfully' })
+
+    }
+    catch (error) {
+        return res.status(400).json({ message: 'Failed to get category data' })
+    }
+
+}
+
 module.exports = {
     httpCreateNewUser,
     httpLoginUser,
@@ -505,5 +522,6 @@ module.exports = {
     httpForgetPassword,
     httpResetPassword,
     httpCreateReview,
-    httpChangePassword
+    httpChangePassword,
+    httpGetAllCategory
 }

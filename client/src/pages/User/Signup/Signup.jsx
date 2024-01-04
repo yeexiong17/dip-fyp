@@ -53,7 +53,7 @@ function Signup() {
 
          if (response.ok) {
             const responseJson = await response.json()
-            userLogin(responseJson.user)
+            userLogin(responseJson.cleanUser)
          } else {
             console.error('Signup failed')
          }
@@ -147,7 +147,11 @@ function Signup() {
                            className={`w-full bg-orange-500 text-center text-white py-4 rounded-lg ${isLoading ? 'opacity-50 cursor-not-allowed' : 'active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform'}`}
                            disabled={isLoading}
                         >
-                           {isLoading ? 'Signing up...' : 'Register Now'}
+                           {
+                              isLoading
+                                 ? <span class="loading loading-spinner loading-md"></span>
+                                 : 'Sign Up'
+                           }
                         </button>
                      </div>
                   </form>

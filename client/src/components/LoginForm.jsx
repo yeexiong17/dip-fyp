@@ -31,8 +31,8 @@ function LoginForm() {
             if (response.ok) {
                 const responseJson = await response.json()
 
-                if (responseJson.user) {
-                    userLogin(responseJson.user)
+                if (responseJson.cleanUser) {
+                    userLogin(responseJson.cleanUser)
                 }
             } else {
                 alert('User credential incorrect')
@@ -46,7 +46,7 @@ function LoginForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className=' w-11/12 max-w-[700px] px-10 py-20 rounded-3xl bg-white border-2 border-gray-100'>
+        <form onSubmit={handleSubmit} className=' w-11/12 max-w-[700px] px-10 py-10 rounded-3xl bg-white border-2 border-gray-100'>
             <h1 className='text-4xl font-semibold'>Login </h1>
             <p className='font-medium text-gray-500 mt-4'>Welcome back! Please login to your account.</p>
             <div className='mt-8'>
@@ -88,7 +88,11 @@ function LoginForm() {
 
                 <div className='mt-8 flex flex-col gap-y-4'>
                     <button className='active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform py-4 bg-orange-500 rounded-xl text-white font-bold text-center '>
-                        {isLoading ? 'Logging In...' : 'Log In'}
+                        {
+                            isLoading
+                                ? <span class="loading loading-spinner loading-md"></span>
+                                : 'Log In'
+                        }
                     </button>
                 </div>
 

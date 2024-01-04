@@ -1,7 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const Sidebar = () => {
+
+    const [incomingReport, setIncomingReport] = useState([])
+
+    useEffect(() => {
+
+        const fetchAllReport = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/admin/dashboard-data', {
+                    method: 'GET'
+                })
+
+                if (response.ok) {
+                    const responseJson = await response.json()
+                    setIncomingReport(responseJson.allReport.filter((report) => report.report_status == 'Incoming'))
+                }
+            }
+            catch (error) {
+                console.log(error)
+            }
+        }
+
+        fetchAllReport()
+
+    }, [])
+
     return (
         <div className="fixed min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-gray-50 text-gray-800 z-10">
             <div className="fixed flex flex-col top-0 left-0 w-64 bg-white h-full border-r">
@@ -43,7 +68,7 @@ const Sidebar = () => {
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                                 </span>
                                 <span className="ml-2 text-sm tracking-wide truncate">Incoming Report</span>
-                                <span className="px-2 py-0.5 ml-auto text-xs font-medium tracking-wide text-green-600 bg-green-100 rounded-full">3</span>
+                                <span className="px-2 py-0.5 ml-auto text-xs font-medium tracking-wide text-green-600 bg-green-100 rounded-full">{incomingReport ? incomingReport.length : 0}</span>
                             </Link>
                         </li>
                         <li>

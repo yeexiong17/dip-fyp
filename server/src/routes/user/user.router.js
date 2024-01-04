@@ -10,7 +10,8 @@ const {
     httpForgetPassword,
     httpResetPassword,
     httpCreateReview,
-    httpChangePassword
+    httpChangePassword,
+    httpGetAllCategory
 } = require('../../controllers/user/user.controller')
 
 const userRouter = express.Router()
@@ -25,5 +26,6 @@ userRouter.get('/report/:userId', httpGetAllReport)
 userRouter.post('/save-report-image/:reportId', httpSaveReportImage)
 userRouter.post('/review', httpCreateReview)
 userRouter.post('/change-password', httpChangePassword)
+userRouter.get('/get-all-category', httpGetAllCategory)
 
 module.exports = userRouter
