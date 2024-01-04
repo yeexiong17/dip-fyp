@@ -213,7 +213,7 @@ const AllReport = () => {
                                     {/* head */}
                                     <thead>
                                         <tr className='bg-neutral-50 text-neutral-800 text-sm border-b border-neutral-300'>
-                                            <th></th>
+                                            <th>ID</th>
                                             <th>Report Category</th>
                                             <th>Description</th>
                                             <th>Status</th>
@@ -226,10 +226,10 @@ const AllReport = () => {
                                             ? null
                                             : <tbody>
                                                 {
-                                                    allReport.map((report, i) => (
+                                                    allReport.map((report, key) => (
 
-                                                        <tr key={report.reportId} className='hover hover:cursor-pointer' onClick={() => { handleRowClick(report); setDrawerOpen(true) }}>
-                                                            <th>{i + 1}</th>
+                                                        <tr key={key} className='hover hover:cursor-pointer' onClick={() => { handleRowClick(report); setDrawerOpen(true) }}>
+                                                            <th>{report.report_id}</th>
                                                             <td>{report.report_category}</td>
                                                             <td className='truncate max-w-xs'>{report.report_description}</td>
                                                             <td>{report.report_status}</td>
@@ -407,6 +407,18 @@ const AllReport = () => {
                                                 })
                                             }
                                         </p>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Report Image:</p>
+                                        <img className='w-full mt-4' src={selectedReport ? selectedReport.report_image : ''} alt="category-image" />
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Complete Image:</p>
+                                        {
+                                            selectedReport.report_completed_image
+                                                ? <img className='w-full mt-4' src={selectedReport.report_completed_image} alt="category-image" />
+                                                : <p>Upload an image to complete</p>
+                                        }
                                     </div>
                                 </>
                                 : null

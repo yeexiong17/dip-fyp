@@ -29,8 +29,6 @@ const Incoming = () => {
                     body: JSON.stringify({ userId }),
                 })
 
-                console.log(userId)
-
                 if (response.ok) {
                     const responseJson = await response.json()
                     setUserData(responseJson.userObject)
@@ -162,10 +160,10 @@ const Incoming = () => {
                                             ? null
                                             : <tbody>
                                                 {
-                                                    incomingReport.map((report, i) => (
+                                                    incomingReport.map((report, key) => (
 
-                                                        <tr key={report.report_id} className='hover hover:cursor-pointer' onClick={() => { handleRowClick(report); setUserId(report.user_id) }}>
-                                                            <th>{i + 1}</th>
+                                                        <tr key={key} className='hover hover:cursor-pointer' onClick={() => { handleRowClick(report); setUserId(report.user_id) }}>
+                                                            <th>{report.report_id}</th>
                                                             <td>{report.report_category}</td>
                                                             <td>{report.report_venue}</td>
                                                             <td className='truncate max-w-xs'>{report.report_description}</td>
@@ -258,6 +256,10 @@ const Incoming = () => {
                                                 })
                                             }
                                         </p>
+                                    </div>
+                                    <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
+                                        <p className='font-bold'>Report Image:</p>
+                                        <img className='w-full mt-4' src={selectedReport ? selectedReport.report_image : ''} alt="category-image" />
                                     </div>
                                 </>
                                 : null

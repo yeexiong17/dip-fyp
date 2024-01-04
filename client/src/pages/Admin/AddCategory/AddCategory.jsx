@@ -171,7 +171,7 @@ const AddCategory = () => {
                             {/* head */}
                             <thead>
                                 <tr className='bg-neutral-50 text-neutral-800 text-sm border-b border-neutral-300'>
-                                    <th>Id</th>
+                                    <th>ID</th>
                                     <th>Category Image</th>
                                     <th>Category</th>
                                     <th></th>
@@ -183,9 +183,9 @@ const AddCategory = () => {
                                     ? null
                                     : <tbody>
                                         {
-                                            categoryData.map((category, i) => (
-                                                <tr key={category.menu_id}>
-                                                    <th className='w-10'>{i + 1}</th>
+                                            categoryData.map((category, key) => (
+                                                <tr key={key}>
+                                                    <th className='w-10'>{category.menu_id}</th>
                                                     <td className='w-60'>
                                                         <img className='w-16 aspect-square' src={category.menu_image} alt="Category-Image" />
                                                     </td>
