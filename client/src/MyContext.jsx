@@ -18,13 +18,23 @@ const ContextProvider = ({ children }) => {
         setUserProfile(userProfile)
         setUserSignIn(true)
         setAdminSignIn(false)
-        navigate('/')
     }
 
-    const userLogout = () => {
-        setUserSignIn(false)
-        setUserProfile(null)
-        location.href = '/login'
+    const userLogout = async () => {
+        document.cookie = `${'token'}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+
+        try {
+            const response = await fetch('http://localhost:8000/user/log-out', {
+                method: 'GET'
+            })
+
+            if (response.ok) {
+                setUserSignIn(false)
+                setUserProfile(null)
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const adminLogin = (adminProfile) => {
@@ -44,13 +54,14 @@ const ContextProvider = ({ children }) => {
         userLogout,
         userProfile,
         setUserProfile,
+        setUserSignIn,
         adminLogin,
         adminLogout,
         adminProfile,
         adminSignIn,
         reportCategory,
         setReportCategory,
-        navigate
+        navigate,
     }
 
     return <MyContext.Provider value={contextValue}>{children}</MyContext.Provider>
@@ -62,5 +73,5 @@ const useAuthContext = () => {
 
 export {
     ContextProvider,
-    useAuthContext
+    useAuthContext,
 }

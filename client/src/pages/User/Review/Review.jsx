@@ -21,9 +21,7 @@ const Review = () => {
             try {
                 const response = await fetch(`http://localhost:8000/user/report/${userProfile.user_id}`, {
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    credentials: 'include'
                 })
 
                 if (response.ok) {
@@ -68,6 +66,7 @@ const Review = () => {
         try {
             const response = await fetch('http://localhost:8000/user/review', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -135,7 +134,7 @@ const Review = () => {
                                                         </tr>
                                                     </thead>
                                                     {
-                                                        reportData.length === 0
+                                                        reportData.filter(report => report.report_status === 'Completed' && report.report_has_reviewed == 0).length == 0
                                                             ? <tbody>
                                                                 <tr>
                                                                     <td colSpan={5}>

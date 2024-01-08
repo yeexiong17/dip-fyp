@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 
 import { useAuthContext } from './MyContext'
 
@@ -31,20 +31,52 @@ import Faq from './pages/User/Faq/Faq'
 
 function App() {
 
-  // const location = useLocation()
-  // const currentPath = location.pathname
-  // const navigate = useNavigate()
+  const { userSignIn, adminSignIn, userLogin, userLogout, navigate, setUserSignIn } = useAuthContext()
+  const location = useLocation()
 
-  const { userSignIn, adminSignIn } = useAuthContext()
+  useEffect(() => {
+
+    const checkAuthenticate = async () => {
+      try {
+
+        const response = await fetch('http://localhost:8000/user/get-user-profile', {
+          method: 'GET',
+          credentials: 'include'
+        })
+
+        if (response.ok) {
+          const responseJson = await response.json()
+          userLogin(responseJson.userObject)
+          navigate(location.pathname)
+        }
+        else {
+          if (response.status == 401) {
+            userLogout()
+          }
+          else {
+            alert('Token Expired. Please Log In Again')
+            navigate('/login')
+          }
+
+        }
+      } catch (error) {
+        console.error('Error during authentication:', error.message)
+      }
+    }
+
+    checkAuthenticate()
+
+  }, [])
+
+  useEffect(() => {
+    console.log(userSignIn);
+  }, [userSignIn]);
 
   return (
     <>
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/forget-password" element={<Forgetpw />} />
-        <Route path="/reset-password/:userId/:token" element={<Resetpw />} />
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/about" element={<About />} />
@@ -54,21 +86,24 @@ function App() {
         <Route path="/admin/signup" element={<AdminSignup />} />
         <Route path="/admin/forget-password" element={<AdminForgetpw />} />
         <Route path="/admin/reset-password/:adminId/:token" element={<AdminResetpw />} />
-        <Route path="/*" element={<Navigate to="/login" />} />
+        <Route path="/*" element={<Navigate to="/" />} />
         <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
 
+        {/* Protected Routes */}
         {
-          userSignIn && !adminSignIn
-            ? (
-              <>
-                <Route path="/track" element={<Tracking />} />
-                <Route path="/report" element={<ReportForm />} />
-                <Route path='/profile' element={<Profile />} />
-                <Route path='/review' element={<Review />} />
-              </>
-            ) : null
+          !adminSignIn && userSignIn
+            ? <>
+              <Route path="/track" element={<Tracking />} />
+              <Route path="/report" element={<ReportForm />} />
+              <Route path='/profile' element={<Profile />} />
+              <Route path='/review' element={<Review />} />
+            </>
+            : <>
+              <Route path="/login" element={<Login />} />
+              <Route path="/forget-password" element={<Forgetpw />} />
+              <Route path="/reset-password/:userId/:token" element={<Resetpw />} />
+            </>
         }
-
 
         {/* Admin Routes */}
         {

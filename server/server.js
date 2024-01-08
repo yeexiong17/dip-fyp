@@ -1,15 +1,11 @@
 const http = require('http')
 
+require('dotenv').config();
+
 const app = require('./src/app')
 const PORT = 8000
 
 const server = http.createServer(app)
-
-// const connection = mysql.createConnection({
-//     host: '127.0.0.1',
-//     user: 'root',
-//     database: 'dip-fyp'
-// });
 
 async function startServer() {
     server.listen(PORT, () => {

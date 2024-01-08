@@ -147,5 +147,5 @@ module.exports = {
     getUserByEmail,
     updatePassword,
     createReview,
-    getAllCategory
+    getAllCategory,
 }

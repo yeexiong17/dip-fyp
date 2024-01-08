@@ -6,7 +6,7 @@ import { useAuthContext } from '../MyContext';
 function LoginForm() {
 
     const [inputs, setInputs] = useState({ email: "", password: "" });
-    const { userLogin } = useAuthContext()
+    const { userLogin, navigate } = useAuthContext()
     const [isLoading, setIsLoading] = useState(false)
 
     const handleChange = (event) => {
@@ -30,9 +30,11 @@ function LoginForm() {
             });
             if (response.ok) {
                 const responseJson = await response.json()
-
                 if (responseJson.cleanUser) {
                     userLogin(responseJson.cleanUser)
+                    document.cookie = `token=${responseJson.token}; secure; samesite=None`;
+
+                    navigate('/')
                 }
             } else {
                 alert('User credential incorrect')

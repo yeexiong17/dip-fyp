@@ -53,7 +53,11 @@ function Signup() {
 
          if (response.ok) {
             const responseJson = await response.json()
+
             userLogin(responseJson.cleanUser)
+            document.cookie = `token=${responseJson.token}; secure; samesite=None`;
+            navigate('/')
+
          } else {
             console.error('Signup failed')
          }

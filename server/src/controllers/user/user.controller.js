@@ -9,13 +9,13 @@ const {
     getUserById,
     createReview,
     getUserByEmail,
-    getAllCategory
+    getAllCategory,
 } = require('../../models/user/user.model')
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 var nodemailer = require('nodemailer')
-var mysqlpool = require('../../../db')
+var crypto = require('crypto');
 
 const JWT_SECRET = 'wkfj4oj(j3j_fjej224()j3nnjt[kfef[]wm2o4j5nmo3mme?eowfkgrk?fmemmo[]feokoofekm4933ojfegnmzo'
 
@@ -23,15 +23,26 @@ async function httpCreateNewUser(req, res) {
     try {
         const userData = req.body
 
-        const user = await createNewUser(userData);
+        const existingUser = await getUserByEmail(userData.email)
+
+        if (existingUser) {
+            return res.status(400).json({ message: 'User Already Exists' })
+        }
+
+        const user = await createNewUser(userData)
 
         const cleanUser = {
             user_id: user.user_id,
             user_username: user.user_username,
-            user_email: user.user_email
+            user_email: user.user_email,
+            timestamp: Date.now(),
         }
 
-        res.status(200).json({ cleanUser, message: 'User created successfully' })
+        const token = jwt.sign(cleanUser, process.env.tokenSecret, { expiresIn: '1h' })
+
+        res.cookie('token', token, { sameSite: 'None', secure: true, httpOnly: true })
+
+        res.status(200).json({ cleanUser, message: 'User created successfully', token })
     }
     catch (error) {
         console.error(error)
@@ -42,21 +53,31 @@ async function httpCreateNewUser(req, res) {
 async function httpLoginUser(req, res) {
     try {
         const userData = req.body
+        const existingUser = await getUserByEmail(userData.email)
+
+        if (!existingUser) {
+            return res.status(400).json({ message: 'User Not Found' })
+        }
 
         const { comparePassword, user } = await loginUser(userData);
 
-        if (comparePassword && user) {
-
-            const cleanUser = {
-                user_id: user.user_id,
-                user_username: user.user_username,
-                user_email: user.user_email
-            }
-
-            res.status(200).json({ cleanUser, message: 'User logged in successfully' });
-        } else {
-            res.status(401).json({ message: 'Invalid credentials' });
+        if (!comparePassword || !user) {
+            return res.status(401).json({ message: 'Invalid credentials' })
         }
+
+        const cleanUser = {
+            user_id: user.user_id,
+            user_username: user.user_username,
+            user_email: user.user_email,
+            unique_identifier: crypto.randomBytes(16).toString('hex'),
+        }
+
+        const token = jwt.sign(cleanUser, process.env.tokenSecret, { expiresIn: '1h' })
+
+        res.cookie('token', token, { sameSite: 'None', secure: true, httpOnly: true })
+
+        res.status(200).json({ cleanUser, message: 'User logged in successfully', token })
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -512,6 +533,14 @@ async function httpGetAllCategory(req, res) {
 
 }
 
+async function httpLogOutUser(req, res) {
+    return res.status(200).json({ message: 'Logout successful' })
+}
+
+async function httpGetUserProfile(req, res) {
+    return res.status(200).json({ userObject: req.user })
+}
+
 module.exports = {
     httpCreateNewUser,
     httpLoginUser,
@@ -523,5 +552,7 @@ module.exports = {
     httpResetPassword,
     httpCreateReview,
     httpChangePassword,
-    httpGetAllCategory
+    httpGetAllCategory,
+    httpLogOutUser,
+    httpGetUserProfile
 }

@@ -14,17 +14,26 @@ function Form() {
     const [image, setImage] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
 
-    const { reportCategory, userProfile, navigate } = useAuthContext()
+    const { reportCategory, userProfile, navigate, userValidation } = useAuthContext()
 
     useEffect(() => {
         const category = reportCategory
+
+        const validate = async () => {
+            try {
+                await userValidation();
+            } catch (error) {
+                console.error('Error during user validation:', error);
+            }
+        };
+
+        validate();
 
         setInputs(values => ({
             ...values,
             category: category,
             status: 'Incoming',
-            review: 0,
-            user_id: userProfile.user_id
+            review: 0
         }))
     }, [])
 
@@ -107,7 +116,7 @@ function Form() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(inputs)
+                body: JSON.stringify({ ...inputs, user_id: userProfile.user_id })
             })
 
             if (response.ok) {
