@@ -22,18 +22,17 @@ const userRouter = express.Router()
 
 userRouter.post('/signup', httpCreateNewUser)
 userRouter.post('/login', httpLoginUser)
-userRouter.post('/update-username/:userId', httpUpdateUsername)
+userRouter.post('/update-username/:userId', authentication, httpUpdateUsername)
 userRouter.post('/forget-password', httpForgetPassword)
 userRouter.post('/reset-password/:userId/:token', httpResetPassword)
-userRouter.post('/report', httpCreateReport)
+userRouter.post('/report', authentication, httpCreateReport)
 userRouter.get('/report/:userId', authentication, httpGetAllReport)
 userRouter.post('/save-report-image/:reportId', httpSaveReportImage)
-userRouter.post('/review', httpCreateReview)
-userRouter.post('/change-password', httpChangePassword)
+userRouter.post('/review', authentication, httpCreateReview)
+userRouter.post('/change-password', authentication, httpChangePassword)
 
 userRouter.get('/get-all-category', httpGetAllCategory)
 userRouter.get('/log-out', httpLogOutUser)
-
 userRouter.get('/get-user-profile', authentication, httpGetUserProfile)
 
 module.exports = userRouter

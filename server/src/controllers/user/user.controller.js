@@ -394,15 +394,15 @@ async function httpForgetPassword(req, res) {
             </body>
             
             </html>`
-        };
+        }
 
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-                console.log(error);
+                console.log(error)
             } else {
-                console.log('Email sent: ' + info.response);
+                console.log('Email sent: ' + info.response)
             }
-        });
+        })
 
         return res.status(200).json({ message: 'Reset Link Has Been Sent To Your Email' })
     }
@@ -425,16 +425,21 @@ async function httpResetPassword(req, res) {
 
     try {
         const verify = jwt.verify(token, secret)
+
+        if (!verify) {
+            return res.status(400).json({ message: 'Link Not Valid' })
+        }
+
         console.log('Verified')
 
         const result = await updatePassword(userId, password)
 
-        res.status(200).json({ message: 'Password Updated Successfully' })
+        return res.status(200).json({ message: 'Password Updated Successfully' })
     }
     catch (error) {
         console.log('Not Verified')
 
-        res.status(400).json({ message: 'Link is not verified' })
+        return res.status(400).json({ message: 'Link is not verified' })
     }
 }
 
@@ -444,12 +449,12 @@ async function httpCreateReport(req, res) {
 
         const result = await createNewReport(userReportData)
 
-        res.status(200).json({ result, message: 'Report saved succesfully' })
+        return res.status(200).json({ result, message: 'Report saved succesfully' })
 
     }
     catch (error) {
         console.log(error)
-        res.status(400).send('Error Saving Report')
+        return res.status(400).send('Error Saving Report')
     }
 }
 
@@ -464,7 +469,7 @@ async function httpSaveReportImage(req, res) {
 
         const result = await saveReportImage(imageUrl, reportId)
 
-        res.status(200).json({ message: 'Attachment stored successfully' })
+        return res.status(200).json({ message: 'Attachment stored successfully' })
     }
     catch (error) {
         console.log(error)
@@ -476,7 +481,7 @@ async function httpGetAllReport(req, res) {
 
     try {
         const result = await getAllReport(userId)
-        res.status(200).json({ result, message: 'All reports fetched successfully' })
+        return res.status(200).json({ result, message: 'All reports fetched successfully' })
 
     }
     catch (error) {
@@ -490,7 +495,7 @@ async function httpCreateReview(req, res) {
     try {
         const { reviewResult, reportResult } = await createReview(report_id, rating1, rating2, comment)
 
-        res.status(200).json({ reviewResult, reportResult, message: 'Review Created Successfully' })
+        return res.status(200).json({ reviewResult, reportResult, message: 'Review Created Successfully' })
     }
     catch (error) {
         console.log(error)

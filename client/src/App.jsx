@@ -36,7 +36,7 @@ function App() {
 
   useEffect(() => {
 
-    const checkAuthenticate = async () => {
+    const checkUserAuthenticate = async () => {
       try {
 
         const response = await fetch('http://localhost:8000/user/get-user-profile', {
@@ -55,6 +55,7 @@ function App() {
           }
           else {
             alert('Token Expired. Please Log In Again')
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; secure; samesite=None'
             navigate('/login')
           }
 
@@ -64,12 +65,12 @@ function App() {
       }
     }
 
-    checkAuthenticate()
+    checkUserAuthenticate()
 
   }, [])
 
   useEffect(() => {
-    console.log(userSignIn);
+    console.log('Login Status:', userSignIn);
   }, [userSignIn]);
 
   return (
@@ -86,7 +87,7 @@ function App() {
         <Route path="/admin/signup" element={<AdminSignup />} />
         <Route path="/admin/forget-password" element={<AdminForgetpw />} />
         <Route path="/admin/reset-password/:adminId/:token" element={<AdminResetpw />} />
-        <Route path="/*" element={<Navigate to="/" />} />
+        <Route path="/*" element={<Navigate to="/login" />} />
         <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
 
         {/* Protected Routes */}
