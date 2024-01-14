@@ -1,7 +1,8 @@
-import React from 'react';
-import { useState } from 'react';
-import { Link } from "react-router-dom";
-import { useAuthContext } from '../MyContext';
+import React from 'react'
+import { useState } from 'react'
+import { Link } from "react-router-dom"
+import { useAuthContext } from '../MyContext'
+import Cookies from 'js-cookie'
 
 function LoginForm() {
 
@@ -32,7 +33,8 @@ function LoginForm() {
                 const responseJson = await response.json()
                 if (responseJson.cleanUser) {
                     userLogin(responseJson.cleanUser)
-                    document.cookie = `token=${responseJson.token}; secure; samesite=None`;
+
+                    Cookies.set('userToken', responseJson.token, { secure: true, sameSite: 'None' })
 
                     navigate('/')
                 }

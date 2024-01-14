@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
+
 import service from "../../../asset/service.jpg"
 
-import { useAuthContext } from '../../../MyContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useAuthContext } from '../../../MyContext'
+import { useNavigate } from 'react-router-dom'
 
 function Signup() {
 
@@ -55,7 +57,7 @@ function Signup() {
             const responseJson = await response.json()
 
             userLogin(responseJson.cleanUser)
-            document.cookie = `token=${responseJson.token}; secure; samesite=None`;
+            Cookies.set('userToken', responseJson.token, { secure: true, sameSite: 'None' })
             navigate('/')
 
          } else {
@@ -64,7 +66,7 @@ function Signup() {
       } catch (error) {
          console.error('Error during signup:', error)
       } finally {
-         setIsLoading(false); // Set loading state to false regardless of success or failure
+         setIsLoading(false)
       }
    };
 

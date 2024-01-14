@@ -1,5 +1,6 @@
 import { createContext, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
 
 const MyContext = createContext()
 
@@ -17,11 +18,10 @@ const ContextProvider = ({ children }) => {
     const userLogin = (userProfile) => {
         setUserProfile(userProfile)
         setUserSignIn(true)
-        setAdminSignIn(false)
     }
 
     const userLogout = async () => {
-        document.cookie = `${'token'}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+        Cookies.remove('userToken')
 
         try {
             const response = await fetch('http://localhost:8000/user/log-out', {
@@ -40,12 +40,25 @@ const ContextProvider = ({ children }) => {
     const adminLogin = (adminProfile) => {
         setAdminProfile(adminProfile)
         setAdminSignIn(true)
-        setUserSignIn(false)
         navigate('/admin/dashboard')
     }
 
-    const adminLogout = () => {
-        setAdminSignIn(false)
+    const adminLogout = async () => {
+        Cookies.remove('adminToken')
+
+        try {
+            const response = await fetch('http://localhost:8000/admin/log-out', {
+                method: 'GET'
+            })
+
+            if (response.ok) {
+                setAdminSignIn(false)
+                setAdminProfile(null)
+                navigate('/admin/login')
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const contextValue = {

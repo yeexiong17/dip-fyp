@@ -24,12 +24,11 @@ const AddCategory = () => {
         confirm('Are you sure you want to delete this?')
     }
 
-    const resetForm = (e) => {
-        e.stopPropagation()
-
+    const resetForm = () => {
         document.querySelector('#input_image').value = ''
         document.querySelector('#input_categoryName').value = ''
         setCategoryName('')
+        setCategoryImage(null)
     }
 
     useEffect(() => {
@@ -38,7 +37,8 @@ const AddCategory = () => {
 
     const getAllCategory = async () => {
         const response = await fetch('http://localhost:8000/admin/get-all-category', {
-            method: 'GET'
+            method: 'GET',
+            credentials: 'include'
         })
 
         if (response.ok) {
@@ -91,7 +91,8 @@ const AddCategory = () => {
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(categoryObject)
+                            body: JSON.stringify(categoryObject),
+                            credentials: 'include'
                         })
 
                         if (response.ok) {
@@ -104,10 +105,7 @@ const AddCategory = () => {
                     }
                     finally {
                         // Reset Form
-                        document.querySelector('#input_image').value = ''
-                        document.querySelector('#input_categoryName').value = ''
-                        setCategoryName('')
-                        setCategoryImage(null)
+                        resetForm()
 
                         getAllCategory()
                         document.getElementById('my_modal_2').close();
@@ -116,7 +114,6 @@ const AddCategory = () => {
                     }
                 }
             )
-
         }
         catch (error) {
             console.log(error)
@@ -140,7 +137,7 @@ const AddCategory = () => {
                         <dialog id="my_modal_2" className="modal">
                             <div className="modal-box">
                                 <form method="dialog">
-                                    <button type={isLoading ? 'button' : ''} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                    <button type={isLoading ? 'button' : ''} onClick={() => resetForm()} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                 </form>
                                 <h3 className="font-bold text-lg">Add Category</h3>
                                 <form>
@@ -152,7 +149,7 @@ const AddCategory = () => {
                                         </div>
                                     </div>
                                     <div className='flex items-center justify-center mt-8'>
-                                        <button onClick={(e) => resetForm(e)} className="btn btn-outline btn-error min-h-[2.5rem] h-10 px-10 mr-6">Reset</button>
+                                        <button onClick={(e) => { e.stopPropagation(); resetForm(e) }} className="btn btn-outline btn-error min-h-[2.5rem] h-10 px-10 mr-6">Reset</button>
                                         <button onClick={() => { onFormSubmit() }} type='button' className="btn btn-outline btn-success min-h-[2.5rem] h-10 px-10">
                                             {
                                                 isLoading

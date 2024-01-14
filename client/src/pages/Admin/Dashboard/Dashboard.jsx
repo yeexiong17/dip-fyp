@@ -90,7 +90,8 @@ const Dashboard = () => {
         (async () => {
             try {
                 const response = await fetch('http://localhost:8000/admin/dashboard-data', {
-                    method: 'GET'
+                    method: 'GET',
+                    credentials: 'include'
                 })
 
                 if (response.ok) {

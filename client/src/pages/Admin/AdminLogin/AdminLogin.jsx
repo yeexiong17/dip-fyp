@@ -1,14 +1,15 @@
-import React from 'react';
-import { useState } from 'react';
-import { Link } from "react-router-dom";
-import admin from '../../../asset/admin.png';
-import { useAuthContext } from '../../../MyContext';
+import React from 'react'
+import { useState } from 'react'
+import { Link } from "react-router-dom"
+import admin from '../../../asset/admin.png'
+import { useAuthContext } from '../../../MyContext'
+import Cookies from 'js-cookie'
 
 function AdminLogin() {
 
   const [inputs, setInputs] = useState({ email: "", password: "" });
 
-  const { adminLogin } = useAuthContext()
+  const { adminLogin, navigate } = useAuthContext()
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -19,22 +20,32 @@ function AdminLogin() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const response = await fetch('http://localhost:8000/admin/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(inputs)
-    })
+    try {
+      const response = await fetch('http://localhost:8000/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(inputs)
+      })
 
-    if (response.ok) {
-      const responseJson = await response.json()
-      adminLogin(responseJson.cleanAdmin)
+      if (response.ok) {
+        const responseJson = await response.json()
+
+        adminLogin(responseJson.cleanAdmin)
+        console.log(responseJson.token)
+
+        Cookies.set('adminToken', responseJson.token, { secure: true, sameSite: 'None' })
+        navigate('/admin/dashboard')
+      }
+      else {
+        const responseJson = await response.json()
+
+        alert(responseJson.message)
+      }
     }
-    else {
-      const responseJson = await response.json()
-
-      alert(responseJson.message)
+    catch (error) {
+      console.log(error)
     }
   }
 

@@ -35,14 +35,14 @@ async function httpCreateNewUser(req, res) {
             user_id: user.user_id,
             user_username: user.user_username,
             user_email: user.user_email,
-            timestamp: Date.now(),
+            unique_identifier: crypto.randomBytes(16).toString('hex'),
         }
 
-        const token = jwt.sign(cleanUser, process.env.tokenSecret, { expiresIn: '1h' })
+        const token = jwt.sign(cleanUser, process.env.userTokenSecret, { expiresIn: '1h' })
 
-        res.cookie('token', token, { sameSite: 'None', secure: true, httpOnly: true })
+        res.cookie('userToken', token, { sameSite: 'None', secure: true, httpOnly: true })
 
-        res.status(200).json({ cleanUser, message: 'User created successfully', token })
+        return res.status(200).json({ cleanUser, message: 'User created successfully', token })
     }
     catch (error) {
         console.error(error)
@@ -72,9 +72,9 @@ async function httpLoginUser(req, res) {
             unique_identifier: crypto.randomBytes(16).toString('hex'),
         }
 
-        const token = jwt.sign(cleanUser, process.env.tokenSecret, { expiresIn: '1h' })
+        const token = jwt.sign(cleanUser, process.env.userTokenSecret, { expiresIn: '1h' })
 
-        res.cookie('token', token, { sameSite: 'None', secure: true, httpOnly: true })
+        res.cookie('userToken', token, { sameSite: 'None', secure: true, httpOnly: true })
 
         res.status(200).json({ cleanUser, message: 'User logged in successfully', token })
 

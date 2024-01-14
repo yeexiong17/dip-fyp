@@ -42,7 +42,8 @@ const AllReport = () => {
         const fetchReviewData = async () => {
             try {
                 const response = await fetch('http://localhost:8000/admin/get-all-review', {
-                    method: 'GET'
+                    method: 'GET',
+                    credentials: 'include'
                 })
 
                 if (response.ok) {
@@ -69,6 +70,7 @@ const AllReport = () => {
         try {
             const response = await fetch('http://localhost:8000/admin/dashboard-data', {
                 method: 'GET',
+                credentials: 'include'
             })
 
             if (response.ok) {
@@ -94,6 +96,7 @@ const AllReport = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ userId }),
+                credentials: 'include'
             })
 
             if (response.ok) {
@@ -174,7 +177,8 @@ const AllReport = () => {
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(urlObject)
+                            body: JSON.stringify(urlObject),
+                            credentials: 'include'
                         })
 
                         if (response.ok) {

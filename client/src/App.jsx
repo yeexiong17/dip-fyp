@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import Cookies from 'js-cookie'
 
 import { useAuthContext } from './MyContext'
 
@@ -31,7 +32,7 @@ import Faq from './pages/User/Faq/Faq'
 
 function App() {
 
-  const { userSignIn, adminSignIn, userLogin, userLogout, navigate, setUserSignIn } = useAuthContext()
+  const { userSignIn, adminSignIn, userLogin, userLogout, navigate, adminLogout, adminLogin } = useAuthContext()
   const location = useLocation()
 
   useEffect(() => {
@@ -51,11 +52,12 @@ function App() {
         }
         else {
           if (response.status == 401) {
+            // If someone purposely change the cookie in storage, then logout
             userLogout()
           }
           else {
             alert('Token Expired. Please Log In Again')
-            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; secure; samesite=None'
+            Cookies.remove('userToken')
             navigate('/login')
           }
 
@@ -65,58 +67,91 @@ function App() {
       }
     }
 
+    const checkAdminAuthenticate = async () => {
+      try {
+
+        const response = await fetch('http://localhost:8000/admin/get-admin-profile', {
+          method: 'GET',
+          credentials: 'include'
+        })
+
+        if (response.ok) {
+          const responseJson = await response.json()
+          adminLogin(responseJson.adminObject)
+          navigate(location.pathname)
+        }
+        else {
+          if (response.status == 401) {
+            // If someone purposely change the cookie in storage, then logout
+            adminLogout()
+          }
+          else {
+            alert('Token Expired. Please Log In Again')
+            Cookies.remove('adminToken')
+            navigate('/admin/login')
+          }
+
+        }
+      } catch (error) {
+        console.error('Error during authentication:', error.message)
+      }
+    }
+
     checkUserAuthenticate()
+    checkAdminAuthenticate()
 
   }, [])
-
-  useEffect(() => {
-    console.log('Login Status:', userSignIn);
-  }, [userSignIn]);
 
   return (
     <>
       <Routes>
         {/* Public Routes */}
-        <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/faq" element={<Faq />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/signup" element={<AdminSignup />} />
-        <Route path="/admin/forget-password" element={<AdminForgetpw />} />
-        <Route path="/admin/reset-password/:adminId/:token" element={<AdminResetpw />} />
-        <Route path="/*" element={<Navigate to="/login" />} />
-        <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
 
         {/* Protected Routes */}
         {
-          !adminSignIn && userSignIn
+          userSignIn
             ? <>
+              {/* These routes only available when logged in */}
+              <Route path="/*" element={<Navigate to="/" />} />
               <Route path="/track" element={<Tracking />} />
               <Route path="/report" element={<ReportForm />} />
               <Route path='/profile' element={<Profile />} />
               <Route path='/review' element={<Review />} />
             </>
             : <>
+              {/* Since we have logged in, we do not need these routes anymore */}
+              <Route path="/*" element={<Navigate to="/login" />} />
+              <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forget-password" element={<Forgetpw />} />
               <Route path="/reset-password/:userId/:token" element={<Resetpw />} />
             </>
         }
 
-        {/* Admin Routes */}
         {
-          adminSignIn && !userSignIn
+          adminSignIn
             ? <>
+              {/* These routes only available when logged in */}
+              <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
               <Route path="/admin/dashboard" element={<Dashboard />} />
               <Route path="/admin/addcategory" element={<AddCategory />} />
               <Route path="/admin/incoming" element={<Incoming />} />
               <Route path="/admin/allreport" element={<AllReport />} />
               <Route path="/admin/profile" element={<AdminProfile />} />
             </>
-            : null
+            : <>
+              {/* Since we have logged in, we do not need these routes anymore */}
+              <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/signup" element={<AdminSignup />} />
+              <Route path="/admin/forget-password" element={<AdminForgetpw />} />
+              <Route path="/admin/reset-password/:adminId/:token" element={<AdminResetpw />} />
+            </>
         }
 
       </Routes>

@@ -41,7 +41,8 @@ const AdminProfile = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(passwordObject)
+                body: JSON.stringify(passwordObject),
+                credentials: 'include'
             })
 
             if (response.ok) {

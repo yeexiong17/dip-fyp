@@ -1,22 +1,23 @@
-import React from 'react';
-import { useState } from 'react';
-import { Link } from "react-router-dom";
-import { useAuthContext } from '../../../MyContext';
+import React from 'react'
+import { useState } from 'react'
+import { Link } from "react-router-dom"
+import { useAuthContext } from '../../../MyContext'
+import Cookies from 'js-cookie'
 
 function AdminSignup() {
 
-    const [inputs, setInputs] = useState({ name: "", email: "", password: "", secretCode: "" });
+    const [inputs, setInputs] = useState({ name: "", email: "", password: "", secretCode: "" })
 
-    const { adminLogin } = useAuthContext()
+    const { adminLogin, navigate } = useAuthContext()
 
     const handleChange = (event) => {
-        const name = event.target.name;
-        const value = event.target.value;
+        const name = event.target.name
+        const value = event.target.value
         setInputs(values => ({ ...values, [name]: value }))
     }
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault()
 
         if (inputs.password !== inputs.confirmPassword) {
             return alert('Password does not match')
@@ -34,8 +35,8 @@ function AdminSignup() {
             if (response.ok) {
                 const responseJson = await response.json()
                 adminLogin(responseJson.cleanAdmin)
-
-                alert(responseJson.message)
+                Cookies.set('adminToken', responseJson.token, { secure: true, sameSite: 'None' })
+                navigate('/admin/dashboard')
             }
             else {
                 const responseJson = await response.json()

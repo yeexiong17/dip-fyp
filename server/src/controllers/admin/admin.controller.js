@@ -17,6 +17,7 @@ const {
 
 const jwt = require('jsonwebtoken')
 var nodemailer = require('nodemailer')
+var crypto = require('crypto')
 
 const JWT_SECRET = 'sdwdfe-ff[]fefwf(320ewf-cecv[efewe2])fefef()femwkmllmfimm3235[]jfoi294390t108hgonqrga[]'
 
@@ -33,10 +34,15 @@ async function httpCreateAdmin(req, res) {
     const cleanAdmin = {
       admin_id: adminObject.admin_id,
       admin_name: adminObject.admin_name,
-      admin_email: adminObject.admin_email
+      admin_email: adminObject.admin_email,
+      unique_identifier: crypto.randomBytes(16).toString('hex'),
     }
 
-    return res.status(200).json({ cleanAdmin, message: 'Admin created successfully' })
+    const token = jwt.sign(cleanAdmin, process.env.adminTokenSecret, { expiresIn: '1h' })
+
+    res.cookie('adminToken', token, { sameSite: 'None', secure: true, httpOnly: true })
+
+    return res.status(200).json({ cleanAdmin, message: 'Admin created successfully', token })
   }
   catch (error) {
     return res.status(400).json({ error, message: 'Error while creating admin' })
@@ -51,14 +57,19 @@ async function httpAdminLogin(req, res) {
   const cleanAdmin = {
     admin_id: admin.admin_id,
     admin_name: admin.admin_name,
-    admin_email: admin.admin_email
+    admin_email: admin.admin_email,
+    unique_identifier: crypto.randomBytes(16).toString('hex'),
   }
 
   if (comparePassword && admin) {
-    return res.status(200).json({ cleanAdmin, message: 'Admin Login Successfully' })
+    const token = jwt.sign(cleanAdmin, process.env.adminTokenSecret, { expiresIn: '1h' })
+
+    res.cookie('adminToken', token, { sameSite: 'None', secure: true, httpOnly: true })
+
+    return res.status(200).json({ cleanAdmin, message: 'Admin Login Successfully', token })
   }
 
-  return res.status(400).json({ message: 'Login Unsuccessful' })
+  return res.status(400).json({ message: 'Invalid Credentials' })
 }
 
 async function httpAdminForgetPassword(req, res) {
@@ -766,6 +777,14 @@ async function httpGetAllCategory(req, res) {
   }
 }
 
+async function httpLogOutAdmin(req, res) {
+  return res.status(200).json({ message: 'Logout successful' })
+}
+
+async function httpGetAdminProfile(req, res) {
+  return res.status(200).json({ adminObject: req.admin })
+}
+
 module.exports = {
   httpCreateAdmin,
   httpAdminLogin,
@@ -779,5 +798,7 @@ module.exports = {
   httpChangePassword,
   httpSetCompletedImage,
   httpCreateNewCategory,
-  httpGetAllCategory
+  httpGetAllCategory,
+  httpLogOutAdmin,
+  httpGetAdminProfile
 }

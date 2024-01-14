@@ -27,6 +27,7 @@ const Incoming = () => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ userId }),
+                    credentials: 'include'
                 })
 
                 if (response.ok) {
@@ -56,6 +57,7 @@ const Incoming = () => {
         try {
             const response = await fetch('http://localhost:8000/admin/dashboard-data', {
                 method: 'GET',
+                credentials: 'include'
             })
 
             if (response.ok) {
@@ -86,7 +88,8 @@ const Incoming = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ reportId: report.report_id })
+            body: JSON.stringify({ reportId: report.report_id }),
+            credentials: 'include'
         })
 
         if (response.ok) {
@@ -116,7 +119,8 @@ const Incoming = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ reportId: report.report_id })
+            body: JSON.stringify({ reportId: report.report_id }),
+            credentials: 'include'
         })
 
         if (response.ok) {
