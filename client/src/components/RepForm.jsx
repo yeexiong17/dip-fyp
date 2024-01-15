@@ -116,7 +116,8 @@ function Form() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ ...inputs, user_id: userProfile.user_id })
+                body: JSON.stringify({ ...inputs, user_id: userProfile.user_id }),
+                credentials: 'include'
             })
 
             if (response.ok) {

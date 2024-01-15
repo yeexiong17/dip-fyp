@@ -55,11 +55,11 @@ function App() {
             // If someone purposely change the cookie in storage, then logout
             userLogout()
           }
-          else {
-            alert('Token Expired. Please Log In Again')
-            Cookies.remove('userToken')
-            navigate('/login')
-          }
+          // else {
+          //   alert('Token Expired. Please Log In Again')
+          //   Cookies.remove('userToken')
+          //   navigate('/login')
+          // }
 
         }
       } catch (error) {
@@ -85,11 +85,11 @@ function App() {
             // If someone purposely change the cookie in storage, then logout
             adminLogout()
           }
-          else {
-            alert('Token Expired. Please Log In Again')
-            Cookies.remove('adminToken')
-            navigate('/admin/login')
-          }
+          // else {
+          //   alert('Token Expired. Please Log In Again')
+          //   Cookies.remove('adminToken')
+          //   navigate('/admin/login')
+          // }
 
         }
       } catch (error) {
@@ -106,6 +106,7 @@ function App() {
     <>
       <Routes>
         {/* Public Routes */}
+        <Route path="/*" element={<Navigate to="/" />} />
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/about" element={<About />} />
@@ -117,7 +118,6 @@ function App() {
           userSignIn
             ? <>
               {/* These routes only available when logged in */}
-              <Route path="/*" element={<Navigate to="/" />} />
               <Route path="/track" element={<Tracking />} />
               <Route path="/report" element={<ReportForm />} />
               <Route path='/profile' element={<Profile />} />
@@ -125,7 +125,6 @@ function App() {
             </>
             : <>
               {/* Since we have logged in, we do not need these routes anymore */}
-              <Route path="/*" element={<Navigate to="/login" />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forget-password" element={<Forgetpw />} />
