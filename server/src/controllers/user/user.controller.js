@@ -17,7 +17,7 @@ const bcrypt = require('bcryptjs')
 var nodemailer = require('nodemailer')
 var crypto = require('crypto');
 
-const JWT_SECRET = 'wkfj4oj(j3j_fjej224()j3nnjt[kfef[]wm2o4j5nmo3mme?eowfkgrk?fmemmo[]feokoofekm4933ojfegnmzo'
+const JWT_SECRET = process.env.user_jwt_secret
 
 async function httpCreateNewUser(req, res) {
     try {

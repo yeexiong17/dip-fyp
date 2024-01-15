@@ -19,7 +19,7 @@ const jwt = require('jsonwebtoken')
 var nodemailer = require('nodemailer')
 var crypto = require('crypto')
 
-const JWT_SECRET = 'sdwdfe-ff[]fefwf(320ewf-cecv[efewe2])fefef()femwkmllmfimm3235[]jfoi294390t108hgonqrga[]'
+const JWT_SECRET = process.env.admin_jwt_secret
 
 async function httpCreateAdmin(req, res) {
   const { name, email, password, secretCode } = req.body
