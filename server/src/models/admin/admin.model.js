@@ -94,7 +94,7 @@ async function getDashboardData() {
 
 async function getUserFromReport(userId) {
     const user = await mysqlpool.query(
-        'SELECT user_id, user_username, user_email FROM user WHERE user_id = ?',
+        'SELECT user_id, user_username, user_email, user_phone FROM user WHERE user_id = ?',
         [userId]
     )
 

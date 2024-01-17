@@ -54,7 +54,6 @@ const ContextProvider = ({ children }) => {
             if (response.ok) {
                 setAdminSignIn(false)
                 setAdminProfile(null)
-                navigate('/admin/login')
             }
         } catch (error) {
             console.log(error)

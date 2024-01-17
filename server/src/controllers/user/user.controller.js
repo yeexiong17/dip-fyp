@@ -35,6 +35,7 @@ async function httpCreateNewUser(req, res) {
             user_id: user.user_id,
             user_username: user.user_username,
             user_email: user.user_email,
+            user_phone: user.user_phone,
             unique_identifier: crypto.randomBytes(16).toString('hex'),
         }
 
@@ -69,6 +70,7 @@ async function httpLoginUser(req, res) {
             user_id: user.user_id,
             user_username: user.user_username,
             user_email: user.user_email,
+            user_phone: user.user_phone,
             unique_identifier: crypto.randomBytes(16).toString('hex'),
         }
 

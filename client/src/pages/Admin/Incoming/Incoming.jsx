@@ -203,6 +203,8 @@ const Incoming = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Drawer Content */}
                 <div className="drawer-side z-50 overflow-y-auto">
                     <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay" onClick={() => { setDrawerOpen(false); setSelectedReport(null); setUserId(null) }}></label>
                     <ul className="menu p-4 w-96 min-h-full bg-base-200 text-base-content">
@@ -217,6 +219,7 @@ const Incoming = () => {
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>{userData.user_username}</p>
                                         <p>{userData.user_email}</p>
+                                        <p>{userData.user_phone ? userData.user_phone : '-'}</p>
                                     </div>
                                     <div className='mt-6'>
                                         <h1 className='text-2xl font-bold'>Report Info</h1>

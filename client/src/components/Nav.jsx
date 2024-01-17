@@ -42,11 +42,11 @@ export default function Nav() {
                         </li>
                         {
                             userSignIn
-                                ? <div className='flex flex-col justify-center items-center'>
+                                ? null
+                                : <div className='flex flex-col justify-center items-center'>
                                     <button onClick={() => location.href = '/signup'} className="btn btn-outline min-h-[2.5rem] h-10 w-full mt-4 px-6 border-orange-500 text-orange-500 hover:text-neutral-50 hover:bg-orange-500 hover:border-orange-500">Sign Up</button>
                                     <button onClick={() => location.href = '/login'} className="btn btn-outline min-h-[2.5rem] h-10 w-full mt-2 px-6 text-neutral-50 bg-orange-500 hover:bg-orange-600 hover:border-orange-600">Log In</button>
                                 </div>
-                                : null
                         }
                     </ul>
                 </div>
@@ -78,6 +78,7 @@ export default function Nav() {
                     </div>
                 </ul>
             </div>
+
             <div className="navbar-end">
                 {
                     userSignIn
