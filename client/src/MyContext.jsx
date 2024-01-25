@@ -10,6 +10,9 @@ const ContextProvider = ({ children }) => {
     const [adminSignIn, setAdminSignIn] = useState(false)
     const [userProfile, setUserProfile] = useState(null)
     const [adminProfile, setAdminProfile] = useState(null)
+    const [socket, setSocket] = useState(null)
+    const [adminAllMessage, setAdminAllMessage] = useState([])
+    const [allConnectedUser, setAllConnectedUser] = useState([])
 
     const [reportCategory, setReportCategory] = useState(null)
 
@@ -74,6 +77,12 @@ const ContextProvider = ({ children }) => {
         reportCategory,
         setReportCategory,
         navigate,
+        socket,
+        setSocket,
+        setAdminAllMessage,
+        adminAllMessage,
+        setAllConnectedUser,
+        allConnectedUser
     }
 
     return <MyContext.Provider value={contextValue}>{children}</MyContext.Provider>

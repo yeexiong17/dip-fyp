@@ -12,7 +12,8 @@ const {
   changePassword,
   setCompletedImage,
   createNewCategory,
-  getAllCategory
+  getAllCategory,
+  getAllAdmin
 } = require('../../models/admin/admin.model')
 
 const jwt = require('jsonwebtoken')
@@ -785,6 +786,16 @@ async function httpGetAdminProfile(req, res) {
   return res.status(200).json({ adminObject: req.admin })
 }
 
+async function httpGetAllAdmin(req, res) {
+  try {
+    const allAdmin = await getAllAdmin()
+
+    return res.status(200).json({ allAdmin })
+  } catch (error) {
+    return res.status(400).json({ message: 'Failed to get all admin' })
+  }
+}
+
 module.exports = {
   httpCreateAdmin,
   httpAdminLogin,
@@ -800,5 +811,6 @@ module.exports = {
   httpCreateNewCategory,
   httpGetAllCategory,
   httpLogOutAdmin,
-  httpGetAdminProfile
+  httpGetAdminProfile,
+  httpGetAllAdmin
 }

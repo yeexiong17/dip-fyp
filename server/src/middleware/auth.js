@@ -13,7 +13,6 @@ const userAuth = async (req, res, next) => {
         }
 
         req.user = user
-        console.log(req.user)
 
         next()
     })
@@ -32,7 +31,6 @@ const adminAuth = async (req, res, next) => {
         }
 
         req.admin = admin
-        console.log(req.admin)
 
         next()
     })

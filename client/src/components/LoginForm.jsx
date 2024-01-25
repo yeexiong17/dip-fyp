@@ -94,7 +94,7 @@ function LoginForm() {
                     <button className='active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform py-4 bg-orange-500 rounded-xl text-white font-bold text-center '>
                         {
                             isLoading
-                                ? <span class="loading loading-spinner loading-md"></span>
+                                ? <span className="loading loading-spinner loading-md"></span>
                                 : 'Log In'
                         }
                     </button>

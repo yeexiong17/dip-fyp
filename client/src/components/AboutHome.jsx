@@ -13,15 +13,15 @@ export default function Forgetpw() {
                     Founded 2023, we embarked on a journey to revolutionize the way faults are reported and addressed in buildings.
                     Our story begins with a shared passion for creating safer, more efficient spaces for everyone.
                 </p>
-                <div class="mt-8">
-                    <a href="/about" class="text-blue-500 hover:text-blue-600 font-medium">Learn more about us
-                        <span class="ml-2">&#8594;</span></a>
+                <div className="mt-8">
+                    <a href="/about" className="text-blue-500 hover:text-blue-600 font-medium">Learn more about us
+                        <span className="ml-2">&#8594;</span></a>
                 </div>
             </div>
 
             <div className="w-full md:w-4/12 px-4 mr-auto ml-auto">
-                <div class="mt-12 md:mt-0">
-                    <img src="https://images.unsplash.com/photo-1531973576160-7125cd663d86" alt="About Us Image" class="object-cover rounded-lg shadow-md" />
+                <div className="mt-12 md:mt-0">
+                    <img src="https://images.unsplash.com/photo-1531973576160-7125cd663d86" alt="About Us Image" className="object-cover rounded-lg shadow-md" />
                 </div>
             </div>
         </div>

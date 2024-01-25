@@ -15,7 +15,8 @@ const {
     httpCreateNewCategory,
     httpGetAllCategory,
     httpLogOutAdmin,
-    httpGetAdminProfile
+    httpGetAdminProfile,
+    httpGetAllAdmin
 } = require('../../controllers/admin/admin.controller')
 
 const { adminAuth } = require('../../middleware/auth')
@@ -37,5 +38,6 @@ adminRouter.post('/create-new-category', adminAuth, httpCreateNewCategory)
 adminRouter.get('/get-all-category', adminAuth, httpGetAllCategory)
 adminRouter.get('/log-out', httpLogOutAdmin)
 adminRouter.get('/get-admin-profile', adminAuth, httpGetAdminProfile)
+adminRouter.get('/get-all-admin', httpGetAllAdmin)
 
 module.exports = adminRouter

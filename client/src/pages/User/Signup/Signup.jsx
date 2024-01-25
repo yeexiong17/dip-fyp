@@ -155,7 +155,7 @@ function Signup() {
                         >
                            {
                               isLoading
-                                 ? <span class="loading loading-spinner loading-md"></span>
+                                 ? <span className="loading loading-spinner loading-md"></span>
                                  : 'Sign Up'
                            }
                         </button>

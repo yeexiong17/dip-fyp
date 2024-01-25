@@ -20,6 +20,14 @@ async function getAdminById(adminId) {
     return admin[0][0]
 }
 
+async function getAllAdmin() {
+    const admin = await mysqlpool.query(
+        'SELECT admin_id, admin_name, admin_email FROM admin'
+    )
+
+    return admin[0]
+}
+
 async function createAdmin(name, email, password) {
 
     const salt = await bcrypt.genSalt(10)
@@ -198,5 +206,6 @@ module.exports = {
     changePassword,
     setCompletedImage,
     createNewCategory,
-    getAllCategory
+    getAllCategory,
+    getAllAdmin
 }
