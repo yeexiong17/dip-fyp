@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useAuthContext } from '../../../MyContext'
 
@@ -11,6 +11,10 @@ const AdminProfile = () => {
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+
+    useEffect(() => {
+        console.log(adminProfile)
+    }, [])
 
     const oldPasswordInput = (e) => {
         setOldPassword(e.target.value)

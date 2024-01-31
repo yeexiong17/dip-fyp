@@ -32,7 +32,7 @@ import LiveChat from './pages/Admin/LiveChat/LiveChat'
 
 function App() {
 
-  const { userSignIn, adminSignIn, userProfile, adminProfile, userLogin, userLogout, navigate, adminLogout, adminLogin, socket, setSocket } = useAuthContext()
+  const { userSignIn, adminSignIn, userProfile, adminProfile, userLogin, userLogout, navigate, adminLogout, adminLogin, socket, setSocket, setAllConnectedUser } = useAuthContext()
   const location = useLocation()
 
   const [openLiveChat, setOpenLiveChat] = useState(false)
@@ -71,11 +71,11 @@ function App() {
             // If someone purposely change the cookie in storage, then logout
             userLogout()
           }
-          // else {
-          //   alert('Token Expired. Please Log In Again')
-          //   Cookies.remove('userToken')
-          //   navigate('/login')
-          // }
+          else {
+            alert('Token Expired. Please Log In Again')
+            userLogout()
+            navigate('/login')
+          }
 
         }
       } catch (error) {
@@ -96,17 +96,18 @@ function App() {
           const responseJson = await response.json()
           adminLogin(responseJson.adminObject)
           navigate(location.pathname)
+          setAdminChatStarted(true)
         }
         else {
           if (response.status == 401) {
             // If someone purposely change the cookie in storage, then logout
             adminLogout()
           }
-          // else {
-          //   alert('Token Expired. Please Log In Again')
-          //   Cookies.remove('adminToken')
-          //   navigate('/admin/login')
-          // }
+          else {
+            alert('Token Expired or Invalid. Please Log In Again')
+            adminLogout()
+            navigate('/admin/login')
+          }
 
         }
       } catch (error) {
@@ -118,14 +119,13 @@ function App() {
       // If admin have not started chat, then start it
       if (!adminChatStarted) {
         checkAdminAuthenticate()
-        setAdminChatStarted(true)
       }
     } else {
       // If is user route, then log user in
       checkUserAuthenticate()
     }
 
-  }, [location.pathname])
+  }, [])
 
   useEffect(() => {
     if (adminProfile) {
@@ -194,11 +194,15 @@ function App() {
 
     newChatSocket.on('adminSelected', (admin) => {
       setSelectedAdmin(admin)
+      console.log(admin)
     })
+
+    // newChatSocket.on('disconnect', () => {
+    //   newChatSocket.emit(selectedAdmin)
+    //   setAllConnectedUser.filter(connectedUser => connectedUser.socketId != newChatSocket.id)
+    // })
   }
-  useEffect(() => {
-    console.log(allmessage)
-  }, [allmessage])
+
   const sendMessage = () => {
 
     const userTextField = document.querySelector('#user-message')
@@ -223,10 +227,12 @@ function App() {
   }
 
   return (
+
     <>
       {
+        // If at admin page, do not render user live chat component
         !location.pathname.startsWith('/admin') && userSignIn
-          ? <div className='flex flex-col fixed bottom-6 right-6 z-50'>
+          ? <div id='live-chat-container' className='flex flex-col fixed bottom-6 right-6 z-50'>
             {/* Chat Box */}
             {
               openLiveChat
@@ -320,7 +326,7 @@ function App() {
                                   </div>
                                 </div>
                                 <button type="button"
-                                  onClick={() => { handleStartChat('user') }}
+                                  onClick={(e) => { handleStartChat('user') }}
                                   className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 rounded-full text-white flex flex-row gap-2 py-3 px-5">
                                   <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -351,59 +357,61 @@ function App() {
           </div >
           : null
       }
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/*" element={<Navigate to="/" />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/faq" element={<Faq />} />
 
-        {/* Protected Routes */}
-        {
-          userSignIn
-            ? <>
-              {/* These routes only available when logged in */}
-              <Route path="/track" element={<Tracking />} />
-              <Route path="/report" element={<ReportForm />} />
-              <Route path='/profile' element={<Profile />} />
-              <Route path='/review' element={<Review />} />
-            </>
-            : <>
-              {/* Since we have logged in, we do not need these routes anymore */}
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/forget-password" element={<Forgetpw />} />
-              <Route path="/reset-password/:userId/:token" element={<Resetpw />} />
-            </>
-        }
+      <div className={`h-full ${startChat && !location.pathname.startsWith('/admin') ? 'pointer-events-none' : null}`}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/*" element={<Navigate to="/" />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<Faq />} />
+          {/* Protected Routes */}
+          {
+            userSignIn
+              ? <>
+                {/* These routes only available when logged in */}
+                <Route path="/track" element={<Tracking />} />
+                <Route path="/report" element={<ReportForm />} />
+                <Route path='/profile' element={<Profile />} />
+                <Route path='/review' element={<Review />} />
+              </>
+              : <>
+                {/* Since we have logged in, we do not need these routes anymore */}
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forget-password" element={<Forgetpw />} />
+                <Route path="/reset-password/:userId/:token" element={<Resetpw />} />
+              </>
+          }
+          {
+            adminSignIn
+              ? <>
+                {/* These routes only available when logged in */}
+                <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
+                <Route path="/admin/dashboard" element={<Dashboard />} />
+                <Route path="/admin/addcategory" element={<AddCategory />} />
+                <Route path="/admin/incoming" element={<Incoming />} />
+                <Route path="/admin/allreport" element={<AllReport />} />
+                <Route path="/admin/profile" element={<AdminProfile />} />
+                <Route path="/admin/livechat" element={<LiveChat />} />
+              </>
+              : <>
+                {/* Since we have logged in, we do not need these routes anymore */}
+                <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin/signup" element={<AdminSignup />} />
+                <Route path="/admin/forget-password" element={<AdminForgetpw />} />
+                <Route path="/admin/reset-password/:adminId/:token" element={<AdminResetpw />} />
+              </>
+          }
 
-        {
-          adminSignIn
-            ? <>
-              {/* These routes only available when logged in */}
-              <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
-              <Route path="/admin/dashboard" element={<Dashboard />} />
-              <Route path="/admin/addcategory" element={<AddCategory />} />
-              <Route path="/admin/incoming" element={<Incoming />} />
-              <Route path="/admin/allreport" element={<AllReport />} />
-              <Route path="/admin/profile" element={<AdminProfile />} />
-              <Route path="/admin/livechat" element={<LiveChat />} />
-            </>
-            : <>
-              {/* Since we have logged in, we do not need these routes anymore */}
-              <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/signup" element={<AdminSignup />} />
-              <Route path="/admin/forget-password" element={<AdminForgetpw />} />
-              <Route path="/admin/reset-password/:adminId/:token" element={<AdminResetpw />} />
-            </>
-        }
-
-      </Routes>
+        </Routes >
+      </div>
     </>
-  );
+
+  )
 
 }
 

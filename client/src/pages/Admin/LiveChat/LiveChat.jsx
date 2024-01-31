@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useAuthContext } from '../../../MyContext'
 
 import Sidebar from '../../../components/Sidebar'
-import { select } from '@material-tailwind/react'
-
 
 const LiveChat = () => {
 
@@ -15,30 +13,52 @@ const LiveChat = () => {
 
     useEffect(() => {
 
-        if (socket) {
-            socket.on('sendUser', (user) => {
-
-                console.log(user)
-                setAllConnectedUser((prev) => [
-                    ...prev,
-                    user
-                ])
-            })
-
-            socket.on('storeMessage', (messageObject) => {
-                console.log('admin message: ', messageObject)
-                setAdminAllMessage((prev) => [
-                    ...prev,
-                    messageObject
-                ])
-            })
+        const saveUser = (user) => {
+            setAllConnectedUser(user)
         }
 
-    }, [socket])
+        const storeMessage = (messageObject) => {
+            setAdminAllMessage((prev) => [
+                ...prev,
+                messageObject
+            ])
+        }
 
-    useEffect(() => {
-        console.log(allConnectedUser)
-    }, [allConnectedUser])
+        const removeMessage = (removeUser) => {
+            let updatedMessage = adminAllMessage.filter(message => message.message.username != removeUser.username)
+
+            setAdminAllMessage(updatedMessage)
+        }
+
+        const resetSelectedChat = (removeUser) => {
+            if (selectedChat && (selectedChat.username == removeUser.username)) {
+                setSelectedChat(null)
+            }
+        }
+
+        const removeUser = (removeUser) => {
+            let updatedUser = allConnectedUser.filter(user => user.socketId != removeUser.disconnectedUserSocket)
+
+            setAllConnectedUser(updatedUser)
+            removeMessage(removeUser)
+            resetSelectedChat(removeUser)
+        }
+
+        if (socket) {
+            socket.on('sendUser', saveUser)
+            socket.on('storeMessage', storeMessage)
+            socket.on('removeUser', removeUser)
+        }
+
+        return () => {
+            if (socket) {
+                socket.off('sendUser', saveUser)
+                socket.off('storeMessage', storeMessage)
+                socket.off('removeUser', removeUser)
+            }
+        }
+
+    }, [socket, allConnectedUser, adminAllMessage, selectedChat])
 
     useEffect(() => {
         if (adminAllMessage.length) {
