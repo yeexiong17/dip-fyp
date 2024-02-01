@@ -42,6 +42,7 @@ function App() {
   const [adminChatStarted, setAdminChatStarted] = useState(false)
   const [selectedAdmin, setSelectedAdmin] = useState(null)
   const [noAdmin, setNoAdmin] = useState(null)
+  const [adminDisconnect, setAdminDisconnect] = useState(false)
 
   useEffect(() => {
 
@@ -143,6 +144,8 @@ function App() {
 
   const handleStartChat = async (role) => {
 
+    setAllMessage([])
+
     const newChatSocket = io('http://localhost:8000')
 
     newChatSocket.on('connect', () => {
@@ -167,10 +170,6 @@ function App() {
 
     })
 
-    newChatSocket.on('chat-time', (message) => {
-      console.log(message)
-    })
-
     newChatSocket.on('message', (messageObject) => {
       // Handle the received message
       setAllMessage((prev) => [
@@ -190,17 +189,20 @@ function App() {
 
     newChatSocket.on('no-admin', (messageObject) => {
       setNoAdmin(messageObject)
+      setAdminDisconnect(true)
     })
 
     newChatSocket.on('adminSelected', (admin) => {
       setSelectedAdmin(admin)
-      console.log(admin)
     })
 
-    // newChatSocket.on('disconnect', () => {
-    //   newChatSocket.emit(selectedAdmin)
-    //   setAllConnectedUser.filter(connectedUser => connectedUser.socketId != newChatSocket.id)
-    // })
+    newChatSocket.on('adminDisconnect', (messageObject) => {
+      setAllMessage((prev) => [
+        ...prev,
+        messageObject
+      ])
+      setAdminDisconnect(true)
+    })
   }
 
   const sendMessage = () => {
@@ -224,6 +226,19 @@ function App() {
     setUserMessage(null)
     userTextField.value = null
     userTextField.focus()
+  }
+
+  const closeConnection = () => {
+
+    let endChat = confirm('Are you sure you want to end the chat?')
+
+    if (endChat) {
+      socket.disconnect()
+      setStartChat(false)
+      setOpenLiveChat(false)
+      setAllMessage([])
+      setSelectedAdmin(null)
+    }
   }
 
   return (
@@ -252,7 +267,9 @@ function App() {
                                   : 'Resolve Bot'
                               }
                             </p>
-                            <button id="close-chat" className="text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400">
+                            <button
+                              onClick={() => { closeConnection() }}
+                              id="close-chat" className="text-neutral-50 hover:text-neutral-300 active:outline-none active:text-neutral-500">
                               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                               </svg>
@@ -305,17 +322,17 @@ function App() {
 
                           </div>
                           <div className="p-4 border-t flex">
-                            <input onChange={(e) => { setUserMessage(e.target.value.trim()) }} id="user-message" type="text" placeholder="Type a message" className="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                            <input disabled={adminDisconnect ? true : false} onChange={(e) => { setUserMessage(e.target.value.trim()) }} id="user-message" type="text" placeholder="Type a message" className="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
                             <button onClick={() => { sendMessage() }} id="send-button" className="bg-orange-500 text-white px-4 py-2 rounded-r-md hover:bg-orange-600 active:bg-orange-700 transition duration-300">Send</button>
                           </div>
                         </div>
                       </div>
 
                       : <>
-                        <div className="bg-orange-500 h-44 rounded-t-lg absolute w-full z-0"></div>
+                        <div className="bg-orange-500 h-full rounded-t-lg absolute w-full z-0"></div>
                         <div className="flex flex-col overflow-y-auto h-full p-4 space-y-4">
                           <div className="flex flex-col z-10 ml-4 text-white">
-                            <div className="text-3xl mb-2">Hi Username</div>
+                            <div className="text-2xl">Hi {userProfile.user_username}</div>
                           </div>
                           <div className="border-0 border-t-4 border-orange-500 rounded z-10 shadow-md text-sm">
                             <div className="bg-white border border-t-0 rounded-t-none rounded-b flex flex-col space-y-2">
@@ -336,10 +353,10 @@ function App() {
                                   Start Live Chat
                                 </button>
                               </div>
-                              <div className="border-t px-6 py-4">
+                              {/* <div className="border-t px-6 py-4">
                                 <a href="#" className="text-sm text-blue-500 hover:text-blue-300">See all your
                                   conversations</a>
-                              </div>
+                              </div> */}
                             </div>
                           </div>
                         </div>
@@ -358,57 +375,57 @@ function App() {
           : null
       }
 
-      <div className={`h-full ${startChat && !location.pathname.startsWith('/admin') ? 'pointer-events-none' : null}`}>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/*" element={<Navigate to="/" />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/faq" element={<Faq />} />
-          {/* Protected Routes */}
-          {
-            userSignIn
-              ? <>
-                {/* These routes only available when logged in */}
-                <Route path="/track" element={<Tracking />} />
-                <Route path="/report" element={<ReportForm />} />
-                <Route path='/profile' element={<Profile />} />
-                <Route path='/review' element={<Review />} />
-              </>
-              : <>
-                {/* Since we have logged in, we do not need these routes anymore */}
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/forget-password" element={<Forgetpw />} />
-                <Route path="/reset-password/:userId/:token" element={<Resetpw />} />
-              </>
-          }
-          {
-            adminSignIn
-              ? <>
-                {/* These routes only available when logged in */}
-                <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
-                <Route path="/admin/dashboard" element={<Dashboard />} />
-                <Route path="/admin/addcategory" element={<AddCategory />} />
-                <Route path="/admin/incoming" element={<Incoming />} />
-                <Route path="/admin/allreport" element={<AllReport />} />
-                <Route path="/admin/profile" element={<AdminProfile />} />
-                <Route path="/admin/livechat" element={<LiveChat />} />
-              </>
-              : <>
-                {/* Since we have logged in, we do not need these routes anymore */}
-                <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin/signup" element={<AdminSignup />} />
-                <Route path="/admin/forget-password" element={<AdminForgetpw />} />
-                <Route path="/admin/reset-password/:adminId/:token" element={<AdminResetpw />} />
-              </>
-          }
+      {/* <div className={`h-full ${startChat && !location.pathname.startsWith('/admin') ? 'pointer-events-none' : null}`}> */}
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/*" element={<Navigate to="/" />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/faq" element={<Faq />} />
+        {/* Protected Routes */}
+        {
+          userSignIn
+            ? <>
+              {/* These routes only available when logged in */}
+              <Route path="/track" element={<Tracking />} />
+              <Route path="/report" element={<ReportForm />} />
+              <Route path='/profile' element={<Profile />} />
+              <Route path='/review' element={<Review />} />
+            </>
+            : <>
+              {/* Since we have logged in, we do not need these routes anymore */}
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/forget-password" element={<Forgetpw />} />
+              <Route path="/reset-password/:userId/:token" element={<Resetpw />} />
+            </>
+        }
+        {
+          adminSignIn
+            ? <>
+              {/* These routes only available when logged in */}
+              <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
+              <Route path="/admin/dashboard" element={<Dashboard />} />
+              <Route path="/admin/addcategory" element={<AddCategory />} />
+              <Route path="/admin/incoming" element={<Incoming />} />
+              <Route path="/admin/allreport" element={<AllReport />} />
+              <Route path="/admin/profile" element={<AdminProfile />} />
+              <Route path="/admin/livechat" element={<LiveChat />} />
+            </>
+            : <>
+              {/* Since we have logged in, we do not need these routes anymore */}
+              <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/signup" element={<AdminSignup />} />
+              <Route path="/admin/forget-password" element={<AdminForgetpw />} />
+              <Route path="/admin/reset-password/:adminId/:token" element={<AdminResetpw />} />
+            </>
+        }
 
-        </Routes >
-      </div>
+      </Routes >
+      {/* </div> */}
     </>
 
   )

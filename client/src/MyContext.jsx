@@ -34,6 +34,7 @@ const ContextProvider = ({ children }) => {
             if (response.ok) {
                 setUserSignIn(false)
                 setUserProfile(null)
+                socket.disconnect()
             }
         } catch (error) {
             console.log(error)

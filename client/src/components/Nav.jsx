@@ -5,7 +5,7 @@ import { useAuthContext } from '../MyContext'
 
 export default function Nav() {
 
-    const { userSignIn, userLogout } = useAuthContext()
+    const { userSignIn, userLogout, socket } = useAuthContext()
 
     return (
         <div className="navbar fixed top-0 z-50 px-6 bg-base-100">
