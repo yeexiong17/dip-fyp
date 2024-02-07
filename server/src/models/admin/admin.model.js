@@ -192,6 +192,24 @@ async function getAllCategory() {
     return categoryData
 }
 
+async function getAllContact() {
+    const [result] = await mysqlpool.query(
+        'SELECT * from contact'
+    )
+
+    return result
+}
+
+async function deleteContact(contactId) {
+
+    const [result] = await mysqlpool.query(
+        'UPDATE contact SET contact_us_delete = ?, contact_us_deleted_date = CURRENT_TIMESTAMP WHERE contact_us_id = ?',
+        ['true', contactId]
+    )
+
+    return result
+}
+
 module.exports = {
     createAdmin,
     adminLogin,
@@ -207,5 +225,7 @@ module.exports = {
     setCompletedImage,
     createNewCategory,
     getAllCategory,
-    getAllAdmin
+    getAllAdmin,
+    getAllContact,
+    deleteContact
 }

@@ -13,7 +13,9 @@ const {
   setCompletedImage,
   createNewCategory,
   getAllCategory,
-  getAllAdmin
+  getAllAdmin,
+  getAllContact,
+  deleteContact
 } = require('../../models/admin/admin.model')
 
 const jwt = require('jsonwebtoken')
@@ -796,6 +798,29 @@ async function httpGetAllAdmin(req, res) {
   }
 }
 
+async function httpGetAllContact(req, res) {
+  try {
+    const result = await getAllContact()
+
+    return res.status(200).json({ message: 'Get All Contact Successfully', data: result })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function httpDeleteContact(req, res) {
+
+  const { contactId } = req.body
+
+  try {
+    const result = await deleteContact(contactId)
+
+    return res.status(200).json({ message: 'Successfully deleted contact record' })
+  } catch (error) {
+
+  }
+}
+
 module.exports = {
   httpCreateAdmin,
   httpAdminLogin,
@@ -812,5 +837,7 @@ module.exports = {
   httpGetAllCategory,
   httpLogOutAdmin,
   httpGetAdminProfile,
-  httpGetAllAdmin
+  httpGetAllAdmin,
+  httpGetAllContact,
+  httpDeleteContact
 }

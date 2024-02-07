@@ -33,7 +33,7 @@ function listen(io) {
                 io.to(randomAdmin.socketId).emit('sendUser', allConnectedUser.filter(user => user.adminSocketId == randomAdmin.socketId))
             }
             else {
-                socket.emit('storeMessage', { message: formatMessage('Resolve Bot', 'No Admin Found.'), role: 'bot' })
+                socket.emit('storeMessage', { message: formatMessage('Resolve Bot', 'No Admin Found. Please try again later'), role: 'bot' })
                 socket.emit('no-admin', { message: formatMessage('Resolve Bot', 'Click the link below to get in touch with us!'), role: 'bot' })
             }
         })

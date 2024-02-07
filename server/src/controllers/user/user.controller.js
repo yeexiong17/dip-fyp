@@ -2,7 +2,7 @@ const {
     createNewUser,
     loginUser,
     createNewReport,
-    updateUsername,
+    updateProfile,
     updatePassword,
     getAllReport,
     saveReportImage,
@@ -10,6 +10,8 @@ const {
     createReview,
     getUserByEmail,
     getAllCategory,
+    contactUs,
+    getAllContact
 } = require('../../models/user/user.model')
 
 const jwt = require('jsonwebtoken')
@@ -86,20 +88,20 @@ async function httpLoginUser(req, res) {
     }
 }
 
-async function httpUpdateUsername(req, res) {
+async function httpUpdateProfile(req, res) {
     const userId = req.params.userId
 
     try {
-        const newUsername = req.body
+        const { username, email, phone } = req.body
 
-        const result = await updateUsername(newUsername, userId)
+        const result = await updateProfile(username, email, phone, userId)
 
-        res.status(200).json({ message: 'Username updated succesfully' })
+        res.status(200).json({ message: 'Profile updated succesfully' })
 
     }
     catch (error) {
         console.log(error)
-        res.status(400).send('Error Saving Report')
+        res.status(400).send('Error Saving Profile')
     }
 }
 
@@ -545,14 +547,33 @@ async function httpLogOutUser(req, res) {
 }
 
 async function httpGetUserProfile(req, res) {
-    return res.status(200).json({ userObject: req.user })
+
+    const user = await getUserById(req.user.user_id)
+
+    return res.status(200).json({ userObject: user })
 }
+
+async function httpContactUs(req, res) {
+    const { username, phone, email, message } = req.body
+
+    try {
+        const result = await contactUs(username, phone, email, message)
+
+        return res.status(200).json({ message: 'Message sent successfully' })
+
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+
 
 module.exports = {
     httpCreateNewUser,
     httpLoginUser,
     httpCreateReport,
-    httpUpdateUsername,
+    httpUpdateProfile,
     httpGetAllReport,
     httpSaveReportImage,
     httpForgetPassword,
@@ -561,5 +582,6 @@ module.exports = {
     httpChangePassword,
     httpGetAllCategory,
     httpLogOutUser,
-    httpGetUserProfile
+    httpGetUserProfile,
+    httpContactUs,
 }

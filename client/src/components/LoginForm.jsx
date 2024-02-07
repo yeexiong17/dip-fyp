@@ -33,7 +33,7 @@ function LoginForm() {
                 const responseJson = await response.json()
                 if (responseJson.cleanUser) {
                     userLogin(responseJson.cleanUser)
-
+                    console.log(responseJson.cleanUser)
                     Cookies.set('userToken', responseJson.token, { secure: true, sameSite: 'None' })
 
                     navigate('/')
@@ -80,12 +80,7 @@ function LoginForm() {
                 </div>
 
                 <div className='mt-8 flex justify-between items-center'>
-                    <div>
-                        <input type="checkbox" id='remember' />
-                        <label className='ml-2 font-medium text-base' htmlFor="remember">Remember me</label>
-                    </div>
-
-                    <Link to="/forget-password" className='font-medium text-base text-orange-500 hover:underline'>
+                    <Link to="/forget-password" className=' ml-auto font-medium text-base text-orange-500 hover:underline'>
                         Forgot password?
                     </Link>
                 </div>

@@ -29,6 +29,7 @@ import Profile from './pages/User/Profile/Profile'
 import Review from './pages/User/Review/Review'
 import Faq from './pages/User/Faq/Faq'
 import LiveChat from './pages/Admin/LiveChat/LiveChat'
+import ContactUs from './pages/Admin/ContactUs/ContactUs'
 
 function App() {
 
@@ -323,7 +324,7 @@ function App() {
                           </div>
                           <div className="p-4 border-t flex">
                             <input disabled={adminDisconnect ? true : false} onChange={(e) => { setUserMessage(e.target.value.trim()) }} id="user-message" type="text" placeholder="Type a message" className="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
-                            <button onClick={() => { sendMessage() }} id="send-button" className="bg-orange-500 text-white px-4 py-2 rounded-r-md hover:bg-orange-600 active:bg-orange-700 transition duration-300">Send</button>
+                            <button disabled={adminDisconnect ? true : false} onClick={() => { sendMessage() }} id="send-button" className="bg-orange-500 text-white px-4 py-2 rounded-r-md hover:bg-orange-600 active:bg-orange-700 transition duration-300">Send</button>
                           </div>
                         </div>
                       </div>
@@ -413,6 +414,7 @@ function App() {
               <Route path="/admin/allreport" element={<AllReport />} />
               <Route path="/admin/profile" element={<AdminProfile />} />
               <Route path="/admin/livechat" element={<LiveChat />} />
+              <Route path="/admin/contact-us" element={<ContactUs />} />
             </>
             : <>
               {/* Since we have logged in, we do not need these routes anymore */}

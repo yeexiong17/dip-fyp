@@ -4,7 +4,7 @@ var mysqlpool = require('../../../db')
 
 async function getUserByEmail(email) {
     user = await mysqlpool.query(
-        'SELECT user_id, user_username, user_email, user_password FROM user WHERE user_email = ?',
+        'SELECT user_id, user_username, user_email, user_phone, user_password FROM user WHERE user_email = ?',
         [email]
     )
 
@@ -13,7 +13,16 @@ async function getUserByEmail(email) {
 
 async function getUserById(userId) {
     user = await mysqlpool.query(
-        'SELECT user_id, user_username, user_email, user_password FROM user WHERE user_id = ?',
+        'SELECT user_id, user_username, user_email, user_phone, user_password FROM user WHERE user_id = ?',
+        [userId]
+    )
+
+    return user[0][0]
+}
+
+async function getUserById(userId) {
+    user = await mysqlpool.query(
+        'SELECT user_id, user_username, user_email, user_phone, user_password FROM user WHERE user_id = ?',
         [userId]
     )
 
@@ -57,14 +66,13 @@ async function loginUser(userData) {
     }
 }
 
-async function updateUsername(newName, userId) {
-    const { newUsername } = newName
+async function updateProfile(username, email, phone, userId) {
 
     const [result] = await mysqlpool.query(
-        'UPDATE user SET user_username = ?, user_updated_date = CURRENT_TIMESTAMP WHERE user_id = ?',
-        [newUsername, userId]
+        'UPDATE user SET user_username = ?, user_email = ?, user_phone = ?, user_updated_date = CURRENT_TIMESTAMP WHERE user_id = ?',
+        [username, email, phone, userId]
     );
-
+    console.log(result)
     return result
 }
 
@@ -136,11 +144,18 @@ async function getAllCategory() {
     return categoryData
 }
 
+async function contactUs(username, phone, email, message) {
+    const [result] = await mysqlpool.query(
+        'INSERT INTO contact (contact_us_name, contact_us_email, contact_us_phone, contact_us_message, contact_us_delete, contact_us_created_date) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)',
+        [username, email, phone, 'false', message]
+    )
+}
+
 module.exports = {
     createNewUser,
     loginUser,
     createNewReport,
-    updateUsername,
+    updateProfile,
     saveReportImage,
     getAllReport,
     getUserById,
@@ -148,4 +163,5 @@ module.exports = {
     updatePassword,
     createReview,
     getAllCategory,
+    contactUs
 }

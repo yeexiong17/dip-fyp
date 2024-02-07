@@ -4,7 +4,7 @@ const {
     httpCreateNewUser,
     httpLoginUser,
     httpCreateReport,
-    httpUpdateUsername,
+    httpUpdateProfile,
     httpGetAllReport,
     httpSaveReportImage,
     httpForgetPassword,
@@ -13,7 +13,8 @@ const {
     httpChangePassword,
     httpGetAllCategory,
     httpLogOutUser,
-    httpGetUserProfile
+    httpGetUserProfile,
+    httpContactUs
 } = require('../../controllers/user/user.controller')
 
 const { userAuth } = require('../../middleware/auth')
@@ -22,7 +23,7 @@ const userRouter = express.Router()
 
 userRouter.post('/signup', httpCreateNewUser)
 userRouter.post('/login', httpLoginUser)
-userRouter.post('/update-username/:userId', userAuth, httpUpdateUsername)
+userRouter.post('/update-profile/:userId', userAuth, httpUpdateProfile)
 userRouter.post('/forget-password', httpForgetPassword)
 userRouter.post('/reset-password/:userId/:token', httpResetPassword)
 userRouter.post('/report', userAuth, httpCreateReport)
@@ -33,5 +34,6 @@ userRouter.post('/change-password', userAuth, httpChangePassword)
 userRouter.get('/get-all-category', httpGetAllCategory)
 userRouter.get('/log-out', httpLogOutUser)
 userRouter.get('/get-user-profile', userAuth, httpGetUserProfile)
+userRouter.post('/contact-us', httpContactUs)
 
 module.exports = userRouter

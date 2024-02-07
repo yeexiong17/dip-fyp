@@ -1,18 +1,20 @@
 import React, { useState } from 'react'
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input'
 
 import Nav from '../../../components/Nav'
 import { useAuthContext } from '../../../MyContext'
 
 const Profile = () => {
 
-    const [editUsername, setEditUsername] = useState(false)
-    const [newUsername, setNewUsername] = useState({})
+    const { userProfile, setUserProfile, navigate } = useAuthContext()
+    const [inputs, setInputs] = useState({ email: userProfile.user_email, username: userProfile.user_username })
+    const [phone, setPhone] = useState(userProfile.user_phone)
+    const [editProfile, setEditProfile] = useState(false)
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const [isGeneralTabChecked, setGeneralTabChecked] = useState(true);
-
-    const { userProfile, setUserProfile, navigate } = useAuthContext()
+    const [isGeneralTabChecked, setGeneralTabChecked] = useState(true)
 
     const handleGeneralTabClick = () => {
         setGeneralTabChecked(true)
@@ -20,6 +22,12 @@ const Profile = () => {
 
     const handleSecurityTabClick = () => {
         setGeneralTabChecked(false)
+    }
+
+    const handleInput = (event) => {
+        const name = event.target.name
+        const value = event.target.value
+        setInputs(values => ({ ...values, [name]: value }))
     }
 
     const changePassword = async () => {
@@ -63,44 +71,38 @@ const Profile = () => {
 
     }
 
-    const onUsernameSave = async () => {
+    const updateProfile = async () => {
 
-        if (Object.keys(newUsername).length === 0 || newUsername.newUsername === '') {
-            return alert('Please enter a valid name')
+        if (inputs.username == '' || inputs.email == '' || phone == '') {
+            return alert('Do not leave blank')
+        }
+
+        const updateUserObject = {
+            username: inputs.username,
+            email: inputs.email,
+            phone: phone
         }
 
         try {
-            const response = await fetch(`http://localhost:8000/user/update-username/${userProfile.user_id}`, {
+            const response = await fetch(`http://localhost:8000/user/update-profile/${userProfile.user_id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(newUsername)
+                credentials: 'include',
+                body: JSON.stringify(updateUserObject)
             })
             if (response.ok) {
-                setUserProfile(value => ({ ...value, user_username: newUsername.newUsername }))
+                setUserProfile(value => ({ ...value, user_username: inputs.username, user_email: inputs.email, user_phone: phone }))
             }
         }
         catch (error) {
             console.error('Unable to save username')
         }
         finally {
-            setEditUsername(false)
-            setNewUsername({})
+            setEditProfile(false)
         }
 
-    }
-
-    const oldPasswordInput = (e) => {
-        setOldPassword(e.target.value)
-    }
-
-    const newPasswordInput = (e) => {
-        setNewPassword(e.target.value)
-    }
-
-    const confirmPasswordInput = (e) => {
-        setConfirmPassword(e.target.value)
     }
 
     return (
@@ -150,38 +152,64 @@ const Profile = () => {
 
                                                     <div className="mb-6 w-full">
                                                         <label htmlFor="first_name"
-                                                            className="block mb-2 text-lg font-semibold text-neutral-900">Your name</label>
+                                                            className="block mb-2 text-lg font-semibold text-neutral-900">Username</label>
                                                         {
-                                                            editUsername
-                                                                ? <input type="text" id="first_name"
+                                                            editProfile
+                                                                ? <input type="text" id="username"
+                                                                    name='username'
                                                                     className="bg-orange-50 border border-orange-300 text-neutral-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 placeholder:text-neutral-600 block w-full p-2.5 "
-                                                                    placeholder={userProfile.user_username}
-                                                                    onChange={(e) => { setNewUsername({ newUsername: e.target.value }) }}
-                                                                    required />
+                                                                    value={inputs.username}
+                                                                    onChange={(e) => { handleInput(e) }}
+                                                                />
                                                                 : <p className="bg-orange-50 border text-neutral-900 text-sm rounded-lg block w-full p-2.5 ">{userProfile.user_username}</p>
                                                         }
+                                                    </div>
+                                                    <div className="mb-6 w-full">
+                                                        <label htmlFor="first_name"
+                                                            className="block mb-2 text-lg font-semibold text-neutral-900">Email</label>
+                                                        {
+                                                            editProfile
+                                                                ? <input type="text" id="email"
+                                                                    name='email'
+                                                                    className="bg-orange-50 border border-orange-300 text-neutral-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 placeholder:text-neutral-600 block w-full p-2.5 "
+                                                                    value={inputs.email}
+                                                                    onChange={(e) => { handleInput(e) }}
+                                                                />
+                                                                : <p className="bg-orange-50 border text-neutral-900 text-sm rounded-lg block w-full p-2.5 ">{userProfile.user_email}</p>
+                                                        }
+                                                    </div>
+                                                    <div className="mb-6 w-full">
+                                                        <label htmlFor="first_name"
+                                                            className="block mb-2 text-lg font-semibold text-neutral-900">Phone</label>
+                                                        <PhoneInput
+                                                            placeholder="Enter phone number"
+                                                            className="[&>*]:bg-orange-50 bg-orange-50 border border-orange-300 text-neutral-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 w-full p-2.5 "
+                                                            value={phone}
+                                                            onChange={setPhone}
+                                                            disabled={!editProfile ? true : false}
+                                                        />
                                                     </div>
 
                                                     <div className="flex justify-end">
                                                         {
-                                                            editUsername
+                                                            editProfile
                                                                 ? <>
                                                                     <button
                                                                         className="text-neutral-50 bg-red-500  hover:bg-red-600 active:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 mr-4 text-center dark:bg-orange-600"
-                                                                        onClick={() => { setEditUsername(false) }}
+                                                                        onClick={() => { setEditProfile(false); setPhone(userProfile.user_phone); setNewUsername(userProfile.user_username) }}
                                                                     >
                                                                         Cancel
                                                                     </button>
                                                                     <button
                                                                         className="text-neutral-50 bg-green-500  hover:bg-green-600 active:bg-green-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-orange-600"
-                                                                        onClick={() => { onUsernameSave() }}
+                                                                        onClick={() => { updateProfile() }}
                                                                     >
                                                                         Save
                                                                     </button>
                                                                 </>
                                                                 : <button
                                                                     className="text-neutral-50 bg-orange-500  hover:bg-orange-600 active:bg-orange-700 font-medium rounded-lg text-sm w-full sm:w-auto px-10 py-2.5 text-center dark:bg-orange-600"
-                                                                    onClick={() => { setEditUsername(true) }}
+                                                                    onClick={() => { setEditProfile(true) }}
                                                                 >
                                                                     Edit
                                                                 </button>
