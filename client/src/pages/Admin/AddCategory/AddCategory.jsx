@@ -150,7 +150,12 @@ const AddCategory = () => {
                                     </div>
                                     <div className='flex items-center justify-center mt-8'>
                                         <button onClick={(e) => { e.stopPropagation(); resetForm(e) }} className="btn btn-outline btn-error min-h-[2.5rem] h-10 px-10 mr-6">Reset</button>
-                                        <button onClick={() => { onFormSubmit() }} type='button' className="btn btn-outline btn-success min-h-[2.5rem] h-10 px-10">
+                                        <button
+                                            onClick={() => { onFormSubmit() }}
+                                            type='button'
+                                            className="btn btn-outline btn-success min-h-[2.5rem] h-10 px-10"
+                                            disabled={fileSelected && categoryName ? false : true}
+                                        >
                                             {
                                                 isLoading
                                                     ? <span className="loading loading-spinner loading-md"></span>

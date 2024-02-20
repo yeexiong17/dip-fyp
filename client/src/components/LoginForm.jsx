@@ -33,7 +33,6 @@ function LoginForm() {
                 const responseJson = await response.json()
                 if (responseJson.cleanUser) {
                     userLogin(responseJson.cleanUser)
-                    console.log(responseJson.cleanUser)
                     Cookies.set('userToken', responseJson.token, { secure: true, sameSite: 'None' })
 
                     navigate('/')

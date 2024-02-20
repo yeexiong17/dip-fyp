@@ -11,12 +11,15 @@ const {
     getUserByEmail,
     getAllCategory,
     contactUs,
-    getAllContact
+    saveUserImage,
+    deleteProfilePicture
 } = require('../../models/user/user.model')
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 var nodemailer = require('nodemailer')
+const fs = require('fs');
+const fetch = require('node-fetch')
 var crypto = require('crypto');
 
 const JWT_SECRET = process.env.user_jwt_secret
@@ -38,6 +41,7 @@ async function httpCreateNewUser(req, res) {
             user_username: user.user_username,
             user_email: user.user_email,
             user_phone: user.user_phone,
+            user_profile_picture: user.user_profile_picture,
             unique_identifier: crypto.randomBytes(16).toString('hex'),
         }
 
@@ -73,6 +77,7 @@ async function httpLoginUser(req, res) {
             user_username: user.user_username,
             user_email: user.user_email,
             user_phone: user.user_phone,
+            user_profile_picture: user.user_profile_picture,
             unique_identifier: crypto.randomBytes(16).toString('hex'),
         }
 
@@ -567,7 +572,59 @@ async function httpContactUs(req, res) {
     }
 }
 
+async function httpFirebaseImage(req, res) {
 
+    const { makeImage, completeImage } = req.body
+
+    try {
+        const makeResponse = await fetch(makeImage)
+        const buffer1 = await makeResponse.buffer()
+
+        const base64data1 = buffer1.toString('base64')
+
+        const completeResponse = await fetch(completeImage)
+        const buffer2 = await completeResponse.buffer()
+
+        const base64data2 = buffer2.toString('base64')
+
+        return res.status(200).json({ makeImage: base64data1, completeImage: base64data2 })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ error: 'Internal Server Error' })
+    }
+}
+
+async function httpSaveUserImage(req, res) {
+    const userId = req.params.userId
+    const { imageUrl } = req.body
+
+    try {
+        if (!imageUrl) {
+            return res.status(400).json({ message: 'imageUrl is missing in the request body' });
+        }
+
+        const result = await saveUserImage(imageUrl, userId)
+        const userObject = await getUserById(userId)
+
+        return res.status(200).json({ userObject, message: 'User profile picture updated successfully' })
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+async function httpDeleteProfilePicture(req, res) {
+    const { userId } = req.body
+
+    try {
+        const result = await deleteProfilePicture(userId)
+        const userObject = await getUserById(userId)
+
+        return res.status(200).json({ userObject, message: 'User profile picture deleted succesfully' })
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 module.exports = {
     httpCreateNewUser,
@@ -584,4 +641,7 @@ module.exports = {
     httpLogOutUser,
     httpGetUserProfile,
     httpContactUs,
+    httpFirebaseImage,
+    httpSaveUserImage,
+    httpDeleteProfilePicture
 }

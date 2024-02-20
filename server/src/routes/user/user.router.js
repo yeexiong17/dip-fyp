@@ -14,7 +14,10 @@ const {
     httpGetAllCategory,
     httpLogOutUser,
     httpGetUserProfile,
-    httpContactUs
+    httpContactUs,
+    httpFirebaseImage,
+    httpSaveUserImage,
+    httpDeleteProfilePicture
 } = require('../../controllers/user/user.controller')
 
 const { userAuth } = require('../../middleware/auth')
@@ -35,5 +38,8 @@ userRouter.get('/get-all-category', httpGetAllCategory)
 userRouter.get('/log-out', httpLogOutUser)
 userRouter.get('/get-user-profile', userAuth, httpGetUserProfile)
 userRouter.post('/contact-us', httpContactUs)
+userRouter.post('/firebase-image', userAuth, httpFirebaseImage)
+userRouter.post('/save-user-image/:userId', userAuth, httpSaveUserImage)
+userRouter.post('/delete-profile-picture', userAuth, httpDeleteProfilePicture)
 
 module.exports = userRouter

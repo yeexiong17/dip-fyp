@@ -16,14 +16,12 @@ function listen(io) {
             }
 
             allAvailableAdmin.push(availableAdmin)
-            console.log('All admin: ', allAvailableAdmin)
         })
 
         socket.on('userConnected', (user) => {
 
             // Choose random admin from all available admin
             let randomAdmin = allAvailableAdmin[Math.floor(Math.random() * allAvailableAdmin.length)]
-            console.log('Random admin: ', randomAdmin)
 
             if (randomAdmin) {
                 // socket.emit('message', formatMessage('Resolve Bot', 'Welcome to Live Chat'))
@@ -61,7 +59,6 @@ function listen(io) {
             let disconnectedUser = allConnectedUser.find(user => user.socketId === socket.id)
             let disconnectedAdmin = allAvailableAdmin.find(admin => admin.socketId === socket.id)
 
-            console.log(disconnectedUser)
             if (disconnectedUser) {
                 allConnectedUser = allConnectedUser.filter(user => user.socketId !== disconnectedUser.socketId)
                 io.to(disconnectedUser.adminSocketId).emit('removeUser', {
@@ -69,9 +66,10 @@ function listen(io) {
                     username: disconnectedUser.username
                 })
             }
-            else if (disconnectedAdmin) {
+            else {
 
                 let adminUser = allConnectedUser.filter((user) => user.adminSocketId == disconnectedAdmin.socketId)
+                allAvailableAdmin = allAvailableAdmin.filter(admin => admin.socketId !== disconnectedAdmin.socketId)
 
                 adminUser.map((user) => {
                     io.to(user.socketId).emit('adminDisconnect', {

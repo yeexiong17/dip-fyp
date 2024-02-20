@@ -1,6 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
+import ReactCrop, {
+    centerCrop,
+    convertToPixelCrop,
+    makeAspectCrop,
+} from 'react-image-crop'
+import { v4 } from 'uuid'
+
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { storage } from '../../../../firebase.config'
 
 import Nav from '../../../components/Nav'
 import { useAuthContext } from '../../../MyContext'
@@ -15,6 +24,8 @@ const Profile = () => {
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [isGeneralTabChecked, setGeneralTabChecked] = useState(true)
+    const [file, setFile] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleGeneralTabClick = () => {
         setGeneralTabChecked(true)
@@ -28,6 +39,14 @@ const Profile = () => {
         const name = event.target.name
         const value = event.target.value
         setInputs(values => ({ ...values, [name]: value }))
+    }
+
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0])
+        console.log(e.target.files[0])
+        // if (e.target.files[0]) {
+        //     document.getElementById('my_modal_3').showModal()
+        // }
     }
 
     const changePassword = async () => {
@@ -105,6 +124,96 @@ const Profile = () => {
 
     }
 
+    const updateImage = async () => {
+
+        setIsLoading(true)
+
+        const imageRef = ref(storage, `user/profile/${file.name + v4()}`)
+
+        const uploadTask = uploadBytesResumable(imageRef, file)
+
+        uploadTask.on("state_changed",
+            (snapshot) => {
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Attachment Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused');
+                        break;
+                    case 'running':
+                        console.log('Attachment Upload is running');
+                        break;
+                }
+            },
+            (error) => {
+                // Handle unsuccessful uploads
+                console.error("Error uploading attachment:", error);
+            },
+            async () => {
+
+                const downloadUrl = await getDownloadURL(imageRef);
+
+                const urlObject = {
+                    imageUrl: downloadUrl
+                }
+
+                try {
+                    const response = await fetch(`http://localhost:8000/user/save-user-image/${userProfile.user_id}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(urlObject),
+                        credentials: 'include'
+                    })
+
+                    if (response.ok) {
+                        const responseJSON = await response.json()
+                        setUserProfile(responseJSON.userObject)
+                        alert(responseJSON.message)
+                    }
+                }
+                catch (error) {
+                    console.error(error)
+                }
+                finally {
+                    setFile(null)
+                    setIsLoading(false)
+                    document.getElementById('my_modal_3').close()
+                }
+            }
+        );
+    }
+
+    const deleteProfilePicture = async () => {
+
+        let answer = confirm('Are you sure to delete profile picture?')
+
+        if (!answer) {
+            return
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/user/delete-profile-picture', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId: userProfile.user_id }),
+                credentials: 'include'
+            })
+
+            if (response.ok) {
+                const responseJson = await response.json()
+                setUserProfile(responseJson.userObject)
+                alert(responseJson.message)
+            }
+        } catch (error) {
+
+        }
+    }
+
     return (
         <>
             <Nav />
@@ -132,17 +241,66 @@ const Profile = () => {
                                             <div className="flex flex-col lg:flex-row mx-auto mt-8 gap-x-10">
                                                 <div className="flex lg:flex-col sm:flex-row items-center space-y-5">
 
-                                                    <img className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-neutral-300 dark:ring-neutral-500"
-                                                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZhY2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
-                                                        alt="Bordered avatar" />
+                                                    {
+                                                        userProfile.user_profile_picture
+                                                            ? <img className="object-cover w-36 h-36 p-1 rounded-full ring-2 ring-neutral-300 dark:ring-neutral-500"
+                                                                src={userProfile.user_profile_picture}
+                                                                alt="Bordered avatar" />
+                                                            : <div className="avatar placeholder">
+                                                                <div className="bg-neutral text-neutral-content rounded-full w-32">
+                                                                    <span className="text-4xl">
+                                                                        {userProfile.user_username[0]}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                    }
 
                                                     <div className="flex flex-col lg:ml-0 sm:ml-10 space-y-5 mt-6">
-                                                        <button type="button"
-                                                            className="py-3.5 px-7 text-base font-medium text-neutral-100 focus:outline-none bg-[#35353d] rounded-lg border border-neutral-200 hover:bg-neutral-900 focus:z-10 focus:ring-4 focus:ring-neutral-200 ">
-                                                            Change picture
+                                                        <button className="btn px-6 text-base font-medium text-neutral-100 focus:outline-none bg-orange-500 rounded-lg border border-neutral-200 hover:bg-orange-600 focus:z-10 focus:ring-4 focus:ring-neutral-200"
+                                                            onClick={() => document.getElementById('my_modal_3').showModal()}>
+                                                            Change Picture
                                                         </button>
+                                                        <dialog id="my_modal_3" className="modal">
+                                                            <div className="modal-box">
+                                                                <form method="dialog">
+                                                                    {/* if there is a button in form, it will close the modal */}
+                                                                    <button
+                                                                        className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                                                                        onClick={() => { setFile(null); }}
+                                                                        disabled={isLoading ? true : false}
+                                                                    >
+                                                                        ✕
+                                                                    </button>
+                                                                </form>
+                                                                <h3 className="font-bold text-xl">Change Your Profile Picture</h3>
+                                                                <div className='mt-6'>
+                                                                    <input
+                                                                        type="file"
+                                                                        id="fileInput"
+                                                                        onChange={(event) => handleFileChange(event)}
+                                                                    />
+                                                                </div>
+
+                                                                <button
+                                                                    className="btn btn-success mt-8 min-h-0 h-10 w-24 text-neutral-50"
+                                                                    disabled={file ? false : true}
+                                                                    onClick={() => updateImage()}
+                                                                >
+                                                                    {
+                                                                        isLoading
+                                                                            ? <span className="loading loading-spinner loading-md"></span>
+                                                                            : 'Change'
+                                                                    }
+                                                                </button>
+
+                                                            </div>
+                                                        </dialog>
+
                                                         <button type="button"
-                                                            className="py-3.5 px-7 text-base font-medium text-neutral-900 focus:outline-none bg-white rounded-lg border border-orange-200 hover:bg-neutral-100 hover:text-[#202142] focus:z-10 focus:ring-4 focus:ring-orange-200 ">
+                                                            className={`py-2 px-6 text-base font-medium focus:outline-none bg-white rounded-lg border ${userProfile.user_profile_picture ? 'hover:bg-neutral-100 hover:text-[#202142] border-orange-200 focus:z-10 focus:ring-4 focus:ring-orange-200 text-neutral-900' : 'text-neutral-500'}`}
+                                                            onClick={() => deleteProfilePicture()}
+                                                            disabled={userProfile.user_profile_picture ? false : true}
+                                                        >
                                                             Delete picture
                                                         </button>
                                                     </div>

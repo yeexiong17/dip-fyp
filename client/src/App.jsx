@@ -269,6 +269,7 @@ function App() {
                               }
                             </p>
                             <button
+                              type='button'
                               onClick={() => { closeConnection() }}
                               id="close-chat" className="text-neutral-50 hover:text-neutral-300 active:outline-none active:text-neutral-500">
                               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -4,7 +4,7 @@ var mysqlpool = require('../../../db')
 
 async function getUserByEmail(email) {
     user = await mysqlpool.query(
-        'SELECT user_id, user_username, user_email, user_phone, user_password FROM user WHERE user_email = ?',
+        'SELECT user_id, user_username, user_email, user_phone, user_profile_picture, user_password FROM user WHERE user_email = ?',
         [email]
     )
 
@@ -13,7 +13,7 @@ async function getUserByEmail(email) {
 
 async function getUserById(userId) {
     user = await mysqlpool.query(
-        'SELECT user_id, user_username, user_email, user_phone, user_password FROM user WHERE user_id = ?',
+        'SELECT user_id, user_username, user_email, user_phone, user_profile_picture, user_password FROM user WHERE user_id = ?',
         [userId]
     )
 
@@ -22,7 +22,7 @@ async function getUserById(userId) {
 
 async function getUserById(userId) {
     user = await mysqlpool.query(
-        'SELECT user_id, user_username, user_email, user_phone, user_password FROM user WHERE user_id = ?',
+        'SELECT user_id, user_username, user_email, user_phone, user_profile_picture, user_password FROM user WHERE user_id = ?',
         [userId]
     )
 
@@ -151,6 +151,24 @@ async function contactUs(username, phone, email, message) {
     )
 }
 
+async function saveUserImage(image, userId) {
+    const [result] = await mysqlpool.query(
+        'UPDATE user SET user_profile_picture = ? WHERE user_id = ?',
+        [image, userId]
+    )
+
+    return result
+}
+
+async function deleteProfilePicture(userId) {
+    const [result] = await mysqlpool.query(
+        'UPDATE user SET user_profile_picture = ? WHERE user_id = ?',
+        [null, userId]
+    )
+
+    return result
+}
+
 module.exports = {
     createNewUser,
     loginUser,
@@ -163,5 +181,7 @@ module.exports = {
     updatePassword,
     createReview,
     getAllCategory,
-    contactUs
+    contactUs,
+    saveUserImage,
+    deleteProfilePicture
 }
