@@ -125,7 +125,7 @@ function Form() {
                 const responseJSON = await response.json()
 
                 await storeImage(responseJSON.result.reportId)
-                console.log('Report Created Successfully')
+                alert('Report Created Successfully')
 
             }
         }
@@ -142,7 +142,7 @@ function Form() {
     return (
         <div className="pt-16 bg-gray-500 dark:bg-gray-900">
             <div className="flex flex-col items-center justify-center px-6 py-12 mx-auto ">
-                <div className="w-1/2 bg-white rounded-lg shadow dark:border md:mt-0 xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div className="w-full md:w-1/2 bg-white rounded-lg shadow dark:border md:mt-0 xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="pb-4 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Incident Report Form

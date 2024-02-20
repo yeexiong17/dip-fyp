@@ -68,7 +68,9 @@ function listen(io) {
             }
             else {
 
-                let adminUser = allConnectedUser.filter((user) => user.adminSocketId == disconnectedAdmin.socketId)
+                let adminUser
+
+                adminUser = allConnectedUser.filter((user) => user.adminSocketId == disconnectedAdmin.socketId)
                 allAvailableAdmin = allAvailableAdmin.filter(admin => admin.socketId !== disconnectedAdmin.socketId)
 
                 adminUser.map((user) => {

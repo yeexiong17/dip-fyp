@@ -210,6 +210,17 @@ async function deleteContact(contactId) {
     return result
 }
 
+async function deleteCategory(categoryId) {
+    const [result] = await mysqlpool.query(
+        'UPDATE menu SET menu_is_deleted = ?, menu_deleted_date = CURRENT_TIMESTAMP WHERE menu_id = ?',
+        ['true', categoryId]
+    )
+
+    const categoryData = getAllCategory()
+
+    return categoryData
+}
+
 module.exports = {
     createAdmin,
     adminLogin,
@@ -227,5 +238,6 @@ module.exports = {
     getAllCategory,
     getAllAdmin,
     getAllContact,
-    deleteContact
+    deleteContact,
+    deleteCategory
 }

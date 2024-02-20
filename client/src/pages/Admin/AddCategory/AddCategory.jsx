@@ -20,8 +20,28 @@ const AddCategory = () => {
         setFileSelected(!!e.target.files.length) // Set to true if files are selected, false otherwise
     }
 
-    const handleDelete = (id) => {
-        confirm('Are you sure you want to delete this?')
+    const handleDelete = async (id) => {
+        let answer = confirm('Are you sure you want to delete this?')
+
+        if (!answer) {
+            return
+        }
+
+        const response = await fetch('http://localhost:8000/admin/delete-category', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ categoryId: id }),
+            credentials: 'include'
+        })
+
+        if (response.ok) {
+
+            const responseJson = await response.json()
+
+            setCategoryData(responseJson.categoryData)
+        }
     }
 
     const resetForm = () => {
@@ -185,21 +205,23 @@ const AddCategory = () => {
                                     ? null
                                     : <tbody>
                                         {
-                                            categoryData.map((category, key) => (
-                                                <tr key={key}>
-                                                    <th className='w-10'>{category.menu_id}</th>
-                                                    <td className='w-60'>
-                                                        <img className='w-16 aspect-square' src={category.menu_image} alt="Category-Image" />
-                                                    </td>
-                                                    <td className='w-60'>
-                                                        <p>{category.menu_name}</p>
-                                                    </td>
+                                            categoryData
+                                                .filter((category) => category.menu_is_deleted !== 'true')
+                                                .map((category, key) => (
+                                                    <tr key={key}>
+                                                        <th className='w-10'>{category.menu_id}</th>
+                                                        <td className='w-60'>
+                                                            <img className='w-16 aspect-square' src={category.menu_image} alt="Category-Image" />
+                                                        </td>
+                                                        <td className='w-60'>
+                                                            <p>{category.menu_name}</p>
+                                                        </td>
 
-                                                    <td className='w-60' align='center'>
-                                                        <button className="btn btn-outline btn-error min-h-[2.5rem] h-10 px-6" onClick={() => handleDelete(category.category_id)}>Delete</button>
-                                                    </td>
-                                                </tr>
-                                            ))
+                                                        <td className='w-60' align='center'>
+                                                            <button className="btn btn-outline btn-error min-h-[2.5rem] h-10 px-6" onClick={() => handleDelete(category.menu_id)}>Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                ))
                                         }
                                     </tbody>
                             }

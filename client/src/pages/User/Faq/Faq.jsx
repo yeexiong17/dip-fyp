@@ -4,7 +4,7 @@ import Nav from '../../../components/Nav'
 const questions = [
     {
         id: 0,
-        question: 'What is the website name?',
+        question: 'What is the name of the website?',
         answer: 'The website name is Resolve.'
     },
     {
@@ -24,7 +24,7 @@ const Faq = () => {
         <>
             <Nav />
             <div className='h-full pt-20 overflow-y-auto'>
-                <div className='flex flex-col justify-center w-3/6 mx-auto'>
+                <div className='flex flex-col justify-center w-5/6 md:w-3/6 mx-auto'>
                     <div className='flex flex-col justify-center items-center'>
                         <h1 className='text-6xl font-bold text-center'>FAQ</h1>
                         <p className='mt-4 text-center text-neutral-500'>Here you will find the answers for the frequently asked questions.</p>

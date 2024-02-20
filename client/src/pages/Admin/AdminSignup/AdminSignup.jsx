@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { Link } from "react-router-dom"
 import { useAuthContext } from '../../../MyContext'
@@ -9,6 +9,23 @@ function AdminSignup() {
     const [inputs, setInputs] = useState({ name: "", email: "", password: "", secretCode: "" })
 
     const { adminLogin, navigate } = useAuthContext()
+
+    useEffect(() => {
+        const handleEnterClick = (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault()
+                document.querySelector('#signup-btn').click()
+            }
+        }
+
+        // Add event listener to the document body
+        document.body.addEventListener('keypress', handleEnterClick)
+
+        // Remove the event listener when the component unmounts
+        return () => {
+            document.body.removeEventListener('keypress', handleEnterClick)
+        };
+    }, [])
 
     const handleChange = (event) => {
         const name = event.target.name
@@ -121,6 +138,7 @@ function AdminSignup() {
                             </div>
                             <div>
                                 <button
+                                    id='signup-btn'
                                     type="submit"
                                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >

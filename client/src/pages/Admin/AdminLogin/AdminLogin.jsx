@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { Link } from "react-router-dom"
 import admin from '../../../asset/admin.png'
@@ -7,13 +7,30 @@ import Cookies from 'js-cookie'
 
 function AdminLogin() {
 
-  const [inputs, setInputs] = useState({ email: "", password: "" });
+  const [inputs, setInputs] = useState({ email: "", password: "" })
 
   const { adminLogin, navigate } = useAuthContext()
 
+  useEffect(() => {
+    const handleEnterClick = (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        document.querySelector('#login-btn').click()
+      }
+    }
+
+    // Add event listener to the document body
+    document.body.addEventListener('keypress', handleEnterClick)
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      document.body.removeEventListener('keypress', handleEnterClick)
+    };
+  }, [])
+
   const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
+    const name = event.target.name
+    const value = event.target.value
     setInputs(values => ({ ...values, [name]: value }))
   }
 
@@ -33,7 +50,6 @@ function AdminLogin() {
         const responseJson = await response.json()
 
         adminLogin(responseJson.cleanAdmin)
-        console.log(responseJson.token)
 
         Cookies.set('adminToken', responseJson.token, { secure: true, sameSite: 'None' })
         navigate('/admin/dashboard')
@@ -103,6 +119,7 @@ function AdminLogin() {
 
           <div>
             <button
+              id='login-btn'
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >

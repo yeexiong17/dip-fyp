@@ -18,7 +18,8 @@ const {
     httpGetAdminProfile,
     httpGetAllAdmin,
     httpGetAllContact,
-    httpDeleteContact
+    httpDeleteContact,
+    httpDeleteCategory
 } = require('../../controllers/admin/admin.controller')
 
 const { adminAuth } = require('../../middleware/auth')
@@ -43,5 +44,6 @@ adminRouter.get('/get-admin-profile', adminAuth, httpGetAdminProfile)
 adminRouter.get('/get-all-admin', httpGetAllAdmin)
 adminRouter.get('/get-all-contact', adminAuth, httpGetAllContact)
 adminRouter.post('/delete-contact', adminAuth, httpDeleteContact)
+adminRouter.post('/delete-category', adminAuth, httpDeleteCategory)
 
 module.exports = adminRouter

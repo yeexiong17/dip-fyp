@@ -5,7 +5,7 @@ import { useAuthContext } from '../MyContext'
 
 export default function Nav() {
 
-    const { userSignIn, userLogout, socket } = useAuthContext()
+    const { userSignIn, userLogout, userProfile } = useAuthContext()
 
     return (
         <div className="navbar fixed top-0 z-50 px-6 bg-base-100">
@@ -84,9 +84,17 @@ export default function Nav() {
                     userSignIn
                         ? <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                                <div className="w-10 rounded-full">
-                                    <img alt="Tailwind CSS Navbar component" src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
-                                </div>
+                                {
+                                    userProfile.user_profile_picture
+                                        ? <img className="object-cover w-10 h-10 rounded-full"
+                                            src={userProfile.user_profile_picture}
+                                            alt="Bordered avatar" />
+                                        : <div className="avatar placeholder">
+                                            <div className="bg-neutral text-neutral-content rounded-full w-10">
+                                                <span>{userProfile.user_username[0]}</span>
+                                            </div>
+                                        </div>
+                                }
                             </div>
                             <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
                                 <li>

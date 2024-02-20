@@ -47,14 +47,6 @@ function App() {
 
   useEffect(() => {
 
-    // if (location.pathname.startsWith('/admin')) {
-    //   window.addEventListener('beforeunload', function (e) {
-    //     e.preventDefault()
-
-    //     e.returnValue = ''
-    //   })
-    // }
-
     const checkUserAuthenticate = async () => {
       try {
 
@@ -239,6 +231,7 @@ function App() {
       setOpenLiveChat(false)
       setAllMessage([])
       setSelectedAdmin(null)
+      setAdminDisconnect(false)
     }
   }
 
@@ -355,10 +348,7 @@ function App() {
                                   Start Live Chat
                                 </button>
                               </div>
-                              {/* <div className="border-t px-6 py-4">
-                                <a href="#" className="text-sm text-blue-500 hover:text-blue-300">See all your
-                                  conversations</a>
-                              </div> */}
+
                             </div>
                           </div>
                         </div>
@@ -377,7 +367,6 @@ function App() {
           : null
       }
 
-      {/* <div className={`h-full ${startChat && !location.pathname.startsWith('/admin') ? 'pointer-events-none' : null}`}> */}
       <Routes>
         {/* Public Routes */}
         <Route path="/*" element={<Navigate to="/" />} />

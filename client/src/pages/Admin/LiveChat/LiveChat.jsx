@@ -6,7 +6,7 @@ import Sidebar from '../../../components/Sidebar'
 
 const LiveChat = () => {
 
-    const { socket, setAdminAllMessage, adminAllMessage, allConnectedUser, setAllConnectedUser, adminProfile } = useAuthContext()
+    const { socket, setAdminAllMessage, adminAllMessage, allConnectedUser, setAllConnectedUser } = useAuthContext()
 
     const [adminMessage, setAdminMessage] = useState(null)
     const [selectedChat, setSelectedChat] = useState(null)
@@ -69,7 +69,7 @@ const LiveChat = () => {
 
     const sendMessage = (e) => {
         const adminTextField = document.querySelector('#admin-message')
-        console.log(selectedChat)
+
         if (!adminMessage) {
             setAdminMessage(null)
             adminTextField.value = null
@@ -127,7 +127,18 @@ const LiveChat = () => {
                                                                 <span className="block ml-2 font-semibold text-gray-600">{user.username}</span>
                                                                 <span className="block ml-2 text-sm text-gray-600">25 minutes</span>
                                                             </div>
-                                                            <span className="block ml-2 text-sm text-gray-600 overflow-ellipsis overflow-hidden whitespace-nowrap">bye</span>
+                                                            <span className="block ml-2 text-sm text-gray-600 overflow-ellipsis overflow-hidden whitespace-nowrap">
+                                                                {
+                                                                    adminAllMessage
+                                                                        ? adminAllMessage
+                                                                            .filter((message) => message.message.username == user.username)
+                                                                            .slice(-1)
+                                                                            .map((lastMessage) => {
+                                                                                return lastMessage.message.text;
+                                                                            })
+                                                                        : ' '
+                                                                }
+                                                            </span>
                                                         </div>
                                                     </a>
                                                 </li>
@@ -162,13 +173,10 @@ const LiveChat = () => {
                                                     <div key={i} className={`chat ${msg.role == 'user' ? 'chat-start' : 'chat-end'}`}>
                                                         <div className="chat-header">
                                                             {msg.message.username}
-                                                            <time className="ml-1 text-xs opacity-50">2 hours ago</time>
+                                                            <time className="ml-2 text-xs opacity-50">{msg.message.time}</time>
                                                         </div>
                                                         <div className="chat-bubble min-h-0 bg-orange-500 text-neutral-50">
                                                             {msg.message.text}
-                                                        </div>
-                                                        <div className="chat-footer opacity-50">
-                                                            Seen
                                                         </div>
                                                     </div>
                                                 ))

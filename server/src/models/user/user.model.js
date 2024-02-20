@@ -146,7 +146,7 @@ async function getAllCategory() {
 
 async function contactUs(username, phone, email, message) {
     const [result] = await mysqlpool.query(
-        'INSERT INTO contact (contact_us_name, contact_us_email, contact_us_phone, contact_us_message, contact_us_delete, contact_us_created_date) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)',
+        'INSERT INTO contact (contact_us_name, contact_us_email, contact_us_phone, contact_us_message, contact_us_delete, contact_us_created_date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)',
         [username, email, phone, 'false', message]
     )
 }

@@ -110,7 +110,7 @@ function Tracking() {
     doc.setFont('helvetica', 'normal'); // Reset font style
 
     // Save the PDF
-    doc.save('Resolve-Report.pdf');
+    doc.save('Resolve Report.pdf');
   }
 
   useEffect(() => {

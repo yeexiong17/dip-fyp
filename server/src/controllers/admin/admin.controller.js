@@ -15,7 +15,8 @@ const {
   getAllCategory,
   getAllAdmin,
   getAllContact,
-  deleteContact
+  deleteContact,
+  deleteCategory
 } = require('../../models/admin/admin.model')
 
 const jwt = require('jsonwebtoken')
@@ -817,7 +818,20 @@ async function httpDeleteContact(req, res) {
 
     return res.status(200).json({ message: 'Successfully deleted contact record' })
   } catch (error) {
+    console.log(error)
+  }
+}
 
+async function httpDeleteCategory(req, res) {
+  const { categoryId } = req.body
+
+  try {
+    const categoryData = await deleteCategory(categoryId)
+
+    return res.status(200).json({ categoryData, message: 'Menu deleted successfully' })
+
+  } catch (error) {
+    console.log(error)
   }
 }
 
@@ -839,5 +853,6 @@ module.exports = {
   httpGetAdminProfile,
   httpGetAllAdmin,
   httpGetAllContact,
-  httpDeleteContact
+  httpDeleteContact,
+  httpDeleteCategory
 }
