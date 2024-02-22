@@ -58,6 +58,7 @@ const ContextProvider = ({ children }) => {
             if (response.ok) {
                 setAdminSignIn(false)
                 setAdminProfile(null)
+                socket.disconnect()
             }
         } catch (error) {
             console.log(error)

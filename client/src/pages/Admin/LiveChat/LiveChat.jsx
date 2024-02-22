@@ -125,7 +125,6 @@ const LiveChat = () => {
                                                         <div className="w-full pb-2">
                                                             <div className="flex justify-between">
                                                                 <span className="block ml-2 font-semibold text-gray-600">{user.username}</span>
-                                                                <span className="block ml-2 text-sm text-gray-600">25 minutes</span>
                                                             </div>
                                                             <span className="block ml-2 text-sm text-gray-600 overflow-ellipsis overflow-hidden whitespace-nowrap">
                                                                 {

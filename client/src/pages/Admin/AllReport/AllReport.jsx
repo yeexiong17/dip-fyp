@@ -333,7 +333,7 @@ const AllReport = () => {
                                             ? <div className='mt-4'>
                                                 <li>
                                                     {
-                                                        selectedReport.report_has_reviewed && selectedReview
+                                                        selectedReport.report_has_reviewed == 1 && selectedReview
                                                             ? <details>
                                                                 <summary className='pl-2 text-xl font-bold'>User Review</summary>
                                                                 <ul className='flex flex-col w-80'>
@@ -366,7 +366,7 @@ const AllReport = () => {
                                                                 </ul>
                                                             </details>
                                                             : <details>
-                                                                <summary className='pl-2 text-xl font-bold'>View User Review</summary>
+                                                                <summary className='pl-2 text-xl font-bold'>User Review</summary>
                                                                 <ul>
                                                                     <p className='text-base'>No Review Available</p>
                                                                 </ul>

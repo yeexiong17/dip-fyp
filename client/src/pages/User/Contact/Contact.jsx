@@ -31,7 +31,7 @@ function Contact() {
 
         if (response.ok) {
             const responseJson = await response.json()
-
+            setInputs({ username: "", email: "", message: "", phone: "" })
             alert(responseJson.message)
         }
     }

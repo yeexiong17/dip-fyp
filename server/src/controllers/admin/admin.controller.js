@@ -29,7 +29,7 @@ async function httpCreateAdmin(req, res) {
   const { name, email, password, secretCode } = req.body
 
   if (secretCode !== '5') {
-    return res.status(400).json({ message: 'Invalid Secret Code' })
+    return res.status(400).json({ message: 'Invalid Secret Code. Please try again' })
   }
 
   try {
@@ -49,6 +49,7 @@ async function httpCreateAdmin(req, res) {
     return res.status(200).json({ cleanAdmin, message: 'Admin created successfully', token })
   }
   catch (error) {
+    console.log(error)
     return res.status(400).json({ error, message: 'Error while creating admin' })
   }
 }

@@ -41,7 +41,7 @@ async function createAdmin(name, email, password) {
 
     const admin = await getAdminById(result.insertId)
 
-    return admin[0][0]
+    return admin
 }
 
 async function adminLogin(email, password) {
@@ -176,8 +176,8 @@ async function setCompletedImage(reportId, imageUrl) {
 async function createNewCategory(name, imageLink) {
 
     const [result] = await mysqlpool.query(
-        'INSERT INTO menu (menu_name, menu_image, menu_created_date) VALUES (?, ?, CURRENT_TIMESTAMP)',
-        [name, imageLink]
+        'INSERT INTO menu (menu_name, menu_image, menu_is_deleted, menu_created_date) VALUES (?, ?, ?, CURRENT_TIMESTAMP)',
+        [name, imageLink, 'false']
     )
 
     return result

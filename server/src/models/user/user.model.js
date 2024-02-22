@@ -129,9 +129,9 @@ async function createReview(report_id, rating1, rating2, comment) {
     )
 
     const [reportResult] = await mysqlpool.query(
-        'UPDATE report SET report_has_reviewed = ? WHERE report_id = ?',
-        [1, report_id]
-    );
+        'UPDATE report SET report_has_reviewed = ?, review_id = ? WHERE report_id = ?',
+        [1, reviewResult.insertId, report_id]
+    )
 
     return { reviewResult, reportResult }
 }

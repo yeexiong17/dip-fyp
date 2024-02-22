@@ -105,6 +105,8 @@ const AddCategory = () => {
                         category_image: downloadUrl
                     }
 
+                    console.log(categoryObject)
+
                     try {
                         const response = await fetch('http://localhost:8000/admin/create-new-category', {
                             method: 'POST',
