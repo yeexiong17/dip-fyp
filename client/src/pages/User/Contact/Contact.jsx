@@ -12,10 +12,6 @@ function Contact() {
         setInputs(values => ({ ...values, [name]: value }))
     }
 
-    useEffect(() => {
-        console.log(inputs)
-    }, [inputs])
-
     const handleSubmit = async (event) => {
         event.preventDefault()
 
