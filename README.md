@@ -1,4 +1,4 @@
-# Building Resolution Issue Platform README
+# Building Resolution Issue Platform
 
 ## Client/Server Setup Guide
 
@@ -48,7 +48,7 @@ This guide provides instructions for setting up the client and server components
 11. Click the refresh icon.
 12. All of the required tables will be created successfully.
 
-### Inside `db.js` file
+### Inside ***db.js*** file
 1. Change the MySQL credentials to your own credential.
 
 ### Additional Notes

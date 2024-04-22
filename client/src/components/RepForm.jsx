@@ -14,20 +14,10 @@ function Form() {
     const [image, setImage] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
 
-    const { reportCategory, userProfile, navigate, userValidation } = useAuthContext()
+    const { reportCategory, userProfile, navigate } = useAuthContext()
 
     useEffect(() => {
         const category = reportCategory
-
-        const validate = async () => {
-            try {
-                await userValidation();
-            } catch (error) {
-                console.error('Error during user validation:', error);
-            }
-        };
-
-        validate();
 
         setInputs(values => ({
             ...values,
@@ -289,7 +279,7 @@ function Form() {
                                 >
                                     {
                                         isLoading
-                                            ? <span class="loading loading-spinner loading-md"></span>
+                                            ? <span className="loading loading-spinner loading-md"></span>
                                             : 'Submit'
                                     }
                                 </button>
