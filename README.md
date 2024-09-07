@@ -8,9 +8,10 @@ This guide provides instructions for setting up the client and server components
 
 **Laptop/Computer Minimum Requirements:**
 - Operating System: Windows 10 or above, macOS, or Linux
-- Node.js: v14.x
-- Npm: Latest version
 - Web Browser: Latest version of Chrome, Firefox, or Safari
+- React.js: Latest version
+- Node.js: v14.x
+- Node Package Manager (NPM): Latest version
 
 **System Integration Manual:**
 - **Frontend:** React.js
@@ -49,7 +50,7 @@ This guide provides instructions for setting up the client and server components
 12. All of the required tables will be created successfully.
 
 ### Inside ***db.js*** file
-1. Change the MySQL credentials to your own credential.
+1. Change the MySQL credentials to your own database credential.
 
 ### Additional Notes
 

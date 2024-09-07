@@ -25,20 +25,6 @@ const ContextProvider = ({ children }) => {
 
     const userLogout = async () => {
         Cookies.remove('userToken')
-
-        try {
-            const response = await fetch('http://localhost:8000/user/log-out', {
-                method: 'GET'
-            })
-
-            if (response.ok) {
-                setUserSignIn(false)
-                setUserProfile(null)
-                socket.disconnect()
-            }
-        } catch (error) {
-            console.log(error)
-        }
     }
 
     const adminLogin = (adminProfile) => {
@@ -49,20 +35,6 @@ const ContextProvider = ({ children }) => {
 
     const adminLogout = async () => {
         Cookies.remove('adminToken')
-
-        try {
-            const response = await fetch('http://localhost:8000/admin/log-out', {
-                method: 'GET'
-            })
-
-            if (response.ok) {
-                setAdminSignIn(false)
-                setAdminProfile(null)
-                socket.disconnect()
-            }
-        } catch (error) {
-            console.log(error)
-        }
     }
 
     const contextValue = {
