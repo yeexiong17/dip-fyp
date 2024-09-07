@@ -5,7 +5,7 @@ import { useAuthContext } from '../MyContext'
 
 export default function Nav() {
 
-    const { userSignIn, userLogout, userProfile } = useAuthContext()
+    const { userSignIn, userLogout, userProfile, navigate } = useAuthContext()
 
     return (
         <div className="navbar fixed top-0 z-50 px-6 bg-base-100">
@@ -102,7 +102,7 @@ export default function Nav() {
                                         Profile
                                     </Link>
                                 </li>
-                                <li><Link onClick={() => userLogout()}>Logout</Link></li>
+                                <li><Link onClick={() => { userLogout(); navigate("/login") }}>Logout</Link></li>
                             </ul>
                         </div>
                         : <div className='hidden md:flex items-center'>
