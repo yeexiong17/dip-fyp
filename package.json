@@ -6,9 +6,12 @@
   "scripts": {
     "client": "npm run dev --prefix client",
     "server": "npm run start -- prefix server",
-    "start": "concurrently \"npm run client\" \"npm run server\""
+    "start": "concurrently \"npm run watch --prefix server\" \"npm run dev --prefix client\""
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
 }
