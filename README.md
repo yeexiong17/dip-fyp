@@ -30,7 +30,7 @@ This guide provides instructions for setting up the client and server components
 6. To start the frontend, run the command `npm run dev`.
 7. In the second terminal, navigate to the server folder (Backend/Server).
 8. Run the command `npm install`.
-9. To start the backend, run the command `npm start`.
+9. To start frontend and backend, navigate to root. Then, run the command `npm start`.
 
 #### Resolve Database
 
