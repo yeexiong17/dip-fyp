@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSearchParams } from 'react-router-dom'
 import Nav from '../../../components/Nav'
 
 const questions = [
@@ -20,6 +21,9 @@ const questions = [
 ]
 
 const Faq = () => {
+    const [searchParams] = useSearchParams()
+    const searchQuery = searchParams.get('q') || ''
+
     return (
         <>
             <Nav />
@@ -28,6 +32,11 @@ const Faq = () => {
                     <div className='flex flex-col justify-center items-center'>
                         <h1 className='text-6xl font-bold text-center'>FAQ</h1>
                         <p className='mt-4 text-center text-neutral-500'>Here you will find the answers for the frequently asked questions.</p>
+                        {searchQuery && (
+                            <p className='mt-4 text-center text-neutral-600'>
+                                Showing results for: <span dangerouslySetInnerHTML={{ __html: searchQuery }} />
+                            </p>
+                        )}
                     </div>
 
                     <div className='mt-10'>
