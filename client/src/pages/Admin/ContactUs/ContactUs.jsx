@@ -90,9 +90,9 @@ const ContactUs = () => {
 
                                                             <tr key={key} className='hover hover:cursor-pointer' onClick={() => { handleRowClick(contact); setDrawerOpen(true) }}>
                                                                 <th>{contact.contact_us_id}</th>
-                                                                <td className='break-all'>{contact.contact_us_name}</td>
+                                                                <td className='break-all' dangerouslySetInnerHTML={{ __html: contact.contact_us_name }} />
                                                                 <td>{contact.contact_us_phone}</td>
-                                                                <td className=''>{contact.contact_us_message}</td>
+                                                                <td className='' dangerouslySetInnerHTML={{ __html: contact.contact_us_message }} />
                                                                 <td>
                                                                     {
                                                                         new Date(contact.contact_us_created_date).toLocaleDateString('en-US', {
@@ -145,7 +145,7 @@ const ContactUs = () => {
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>Name:</p>
-                                        <p className='font-normal mt-2'>{selectedContact.contact_us_name}</p>
+                                        <p className='font-normal mt-2' dangerouslySetInnerHTML={{ __html: selectedContact.contact_us_name }} />
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>Email:</p>
@@ -157,7 +157,7 @@ const ContactUs = () => {
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>Message:</p>
-                                        <p className='font-normal mt-2'>{selectedContact.contact_us_message}</p>
+                                        <p className='font-normal mt-2' dangerouslySetInnerHTML={{ __html: selectedContact.contact_us_message }} />
                                     </div>
                                     <div className='mt-2 bg-neutral-50 p-4 shadow rounded'>
                                         <p className='font-bold'>Date Created:</p>
